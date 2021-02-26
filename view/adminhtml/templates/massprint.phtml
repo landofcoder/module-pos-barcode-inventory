@@ -1,0 +1,17 @@
+<?php
+$blockObj= $block->getLayout()->createBlock('Lof\BarcodeInventory\Block\Adminhtml\Barcode\MassPrint');
+
+$collection =  $blockObj->getFoo();
+/** @var TYPE_NAME $helper */
+$helper = $this->helper('Lof\BarcodeInventory\Helper\Data');
+$helper->generatePaperPrint($collection);
+?>
+    <style type="text/css">
+        <?php
+            echo $helper->getCss();
+        ?>
+    </style>
+    <script>
+        window.print();
+    </script>
+<?php die;

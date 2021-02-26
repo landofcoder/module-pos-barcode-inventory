@@ -1,0 +1,21 @@
+<input class="admin__control-text" type="hidden" data-bind="
+        event: {change: userChanges},
+        value: value,
+        hasFocus: focused,
+        valueUpdate: valueUpdate,
+        attr: {
+            name: inputName,
+            placeholder: placeholder,
+            'aria-describedby': noticeId,
+            id: elementId,
+            disabled: disabled
+    }" />
+<button type="button" class="action-primary"
+        css="
+            'action-advanced': $data.displayAsLink,
+            'action-secondary': !$data.displayAsLink
+        "
+        attr="'data-index': index, 'data-url': dialogUrl, id: elementId+'_button'"
+        onClick="massBarcodePrint(this.getAttribute('data-url'))">
+    <span attr="id: elementId+'_bttext'">Print</span>
+</button>

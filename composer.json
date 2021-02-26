@@ -1,0 +1,30 @@
+{
+    "name": "landofcoder/module-barcodeinventory",
+    "description": "Magento 2 extensoin Generate barcode for inventory product by landofcoder",
+    "type": "magento2-module",
+    "license": [
+        "OSL-3.0",
+        "AFL-3.0"
+    ],
+    "authors": [
+        {
+            "email": "landofcoder@gmail.com",
+            "name": "Landofcoder",
+            "homepage": "https://landofcoder.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "version": "1.0.0",
+    "require": {
+        "picqer/php-barcode-generator": "*",
+        "mpdf/mpdf": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Lof\\BarcodeInventory\\": ""
+        },
+        "files": [
+            "registration.php"
+        ]
+    }
+}

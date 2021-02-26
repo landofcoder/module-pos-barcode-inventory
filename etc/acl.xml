@@ -1,0 +1,29 @@
+<?xml version="1.0" ?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Acl/etc/acl.xsd">
+    <acl>
+        <resources>
+            <resource id="Magento_Backend::admin">
+                <resource id="Lof_BarcodeInventory::barcode" sortOrder="10" title="Barcode Inventory">
+                    <resource id="Lof_BarcodeInventory::upload_csv" sortOrder="10" title="Upload CSV"/>
+                    <resource id="Lof_BarcodeInventory::print_barcode" sortOrder="20" title="Print Barcode"/>
+                    <resource id="Lof_BarcodeInventory::mass_print" sortOrder="20" title="Mass Print Barcode"/>
+                    <resource id="Lof_BarcodeInventory::barcode_generate" sortOrder="20" title="Barcode Generate"/>
+                    <resource id="Lof_BarcodeInventory::product_info" sortOrder="20" title="Get Product info"/>
+                    <resource id="Lof_BarcodeInventory::get_all_barcode" sortOrder="20" title="Get All Barcode"/>
+                    <resource id="Lof_BarcodeInventory::add_product_to_cart" sortOrder="20" title="Add product to cart"/>
+                    <resource id="Lof_BarcodeInventory::update_qty" sortOrder="20" title="Update product qty"/>
+                </resource>
+                <resource id="Magento_Backend::stores">
+                    <resource id="Magento_Backend::stores_settings">
+                        <resource id="Magento_Config::config">
+                            <resource id="Lof_BarcodeInventory::config_lof_barcodeinventory" title="Barcode Inventory Settings">
+                                <resource id="Lof_BarcodeInventory::generate_barcode" sortOrder="20" title="Generate Barcode"/>
+                                <resource id="Lof_BarcodeInventory::print_paper" sortOrder="20" title="Print Paper"/>
+                            </resource>
+                        </resource>
+                    </resource>
+                </resource>
+            </resource>
+        </resources>
+    </acl>
+</config>

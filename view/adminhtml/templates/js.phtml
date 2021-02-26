@@ -1,0 +1,53 @@
+<?php
+//function massPrintBarcode()
+
+?>
+<script type="text/javascript">
+    function downloadExample(url) {
+        require([
+            "jquery",
+            "jquery/ui"
+        ], function($){
+            window.open(url);
+        })
+    }
+    function massBarcodePrint(action_url){
+        require([
+            "jquery",
+            "jquery/ui"
+        ], function($){
+            if(action_url){
+                if($(".file-uploader-filename").length > 0){
+                    var file_upload_name = $(".file-uploader-filename").text();
+                    if(file_upload_name){
+                        $.ajax({
+                            url: "/lof_printbarcode/printbarcode/printfile/file/"+file_upload_name,
+                            type: 'POST',
+                            dataType: 'json',
+                            data: {},
+                            complete: function(response) {
+                                console.log(response);
+                                console.log(this.url);
+                                var data = response.responseJSON.data1;
+                                var print_window = window.open('', 'print', 'status=1,width=700,height=700');
+                                if (print_window) {
+                                    print_window.document.open();
+                                    print_window.document.write(data);
+                                    print_window.document.close();
+                                    print_window.print();
+                                } else {
+                                    console.log('Message: Your browser has blocked the automatic popup, please change your browser settings or print the receipt manually');
+                                }
+                            },
+                            error: function (xhr, status, errorThrown) {
+                                console.log('Error happens. Try again.');
+                            }
+                        });
+                    }
+                }
+            }
+
+
+        })
+    }
+</script>

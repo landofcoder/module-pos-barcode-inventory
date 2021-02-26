@@ -1,0 +1,52 @@
+<?php
+/** @var TYPE_NAME $helper */
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$objDate = $objectManager->create('Magento\Framework\Stdlib\DateTime\DateTime');
+$date = $objDate->gmtDate();
+$helper = $this->helper('Lof\BarcodeInventory\Helper\Data');
+$generator = new \Picqer\Barcode\BarcodeGeneratorPNG();
+if ($helper->getDesignConfig('use_label') == '0') {
+    $str =  $helper->getDesignConfig('barcode_label_content');
+    $label_width = 250;
+} else {
+    $label_id = $helper->getDesignConfig('select_label');
+    $label = $objectManager->create('Lof\BarcodeLabel\Model\Label');
+    $att = $label->load($label_id)->getProductAttribute();
+    $label_width = $label->load($label_id)->getLabelWidth();
+    $str = '';
+    if ($helper->getDesignConfig('display_logo') == '1') {
+        $width = $helper->getDesignConfig('logo_width');
+        $height = $helper->getDesignConfig('logo_height');
+        $url = str_replace("/index.php/", "/", $block->getDomain());
+        $logo = $helper->getDesignConfig('logo');
+        $str .= "<div class = 'row'><img width='".$width."' height='".$height."' src='".$url."media/lof/barcode_logo/".$logo."' alt='logo'></div>";
+    }
+    $str .= "<div class = 'row'><b>{{product_name}}</b></div>";
+    $str .= "<div class='row'>{{barcode}}</div>";
+    $str .= "<div class = 'row'><b>{{barcode_number}}</b></div>";
+    $str .= "<div class = 'row'><b>{{product_price}}</b></div>";
+    $attributes =  explode(',', $att);
+    foreach ($attributes as $item) {
+        $str .= "<div class = 'row'><b>$item</b></div>";
+    }
+    $str = "<div class=\"barcode_paper\">$str</div>";
+}
+$bar =  '<img width="'.$label_width.'" src="data:image/png;base64,' . base64_encode($generator->getBarcode('24-MB01', $generator::TYPE_CODE_128)) . '">';
+$str = str_replace("{{product_name}}", 'Joust Duffle Bag', $str);
+$str = str_replace("{{barcode}}", $bar, $str);
+$str = str_replace("{{product_sku}}", '24-MB01', $str);
+$str = str_replace("{{product_price}}", '$34.00', $str);
+$str = str_replace("{{barcode_number}}", '12345678', $str);
+for ($i = 0; $i < 10; $i++) {
+    echo $str;
+}
+?>
+<style type="text/css">
+    <?php
+       echo $helper->getCss();
+    ?>
+</style>
+<script>
+window.print();
+</script>
+<?php die;

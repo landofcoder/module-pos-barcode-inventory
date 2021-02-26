@@ -1,0 +1,17 @@
+<input class="admin__control-text" type="hidden" data-bind="
+        event: {change: userChanges},
+        value: value,
+        hasFocus: focused,
+        valueUpdate: valueUpdate,
+        attr: {
+            name: inputName,
+            placeholder: placeholder,
+            'aria-describedby': noticeId,
+            id: elementId,
+            disabled: disabled
+    }" />
+<button type="button" class="action-secondary"
+        attr="'data-index': index, 'data-url': dialogUrl, id: elementId+'_button'"
+        onClick="downloadExample(this.getAttribute('data-url'))">
+    <span attr="id: elementId+'_bttext'">Download</span>
+</button>

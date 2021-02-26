@@ -1,0 +1,131 @@
+<?xml version="1.0" ?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="landofcoder" sortOrder="999" translate="label">
+            <label>landofcoder</label>
+        </tab>
+        <section id="barcode" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="10" translate="label">
+            <label>Barcode</label>
+            <tab>landofcoder</tab>
+            <resource>Lof_BarcodeInventory::config_lof_barcodeinventory</resource>
+            <group id="general" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="10" translate="label">
+                <label>General Setting</label>
+                <field id="enabled" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Enable</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[Select <strong>Yes</strong> to enable this module.]]></comment>
+                </field>
+                <field id="attribute_barcode" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Attribute for Barcode</label>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                    <source_model>Lof\BarcodeInventory\Model\Config\Source\BarcodeAttribute</source_model>
+                    <comment><![CDATA[Attributes for generating barcode. If you don't find the attribute you want, please contact us for support.]]></comment>
+                </field>
+                <field id="generate_barcode" translate="label comment" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <frontend_model>Lof\BarcodeInventory\Block\Adminhtml\System\Config\Generate</frontend_model>
+                    <label>Auto Generate Barcode</label>
+                    <comment><![CDATA[Click RUN to generate barcode number for products without barcode.]]></comment>
+                    <depends>
+                        <field id="attribute_barcode">product_code</field>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+            </group>
+            <group id="design" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="20" translate="label">
+                <depends>
+                    <field id="barcode/general/enabled">1</field>
+                </depends>
+                <label>Barcode Design</label>
+                <field id="use_label" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Use Barcode Label</label>
+                    <source_model>Lof\BarcodeInventory\Model\Config\Source\UseLabel</source_model>
+                    <comment><![CDATA[Select <strong>Yes</strong> to use barcode label.]]></comment>
+                </field>
+                <field id="select_label" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Select Barcode Label</label>
+                    <depends>
+                        <field id="use_label">1</field>
+                    </depends>
+                    <source_model>Lof\BarcodeInventory\Model\Config\Source\BarcodeLabels</source_model>
+                </field>
+                <field id="display_logo" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="10" translate="label" type="select">
+                    <label>Display Logo</label>
+                    <comment/>
+                    <depends>
+                        <field id = "use_label">1</field>
+                    </depends>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="logo" translate="label" type="image" sortOrder="11" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Image Upload</label>
+                    <backend_model>Lof\BarcodeInventory\Model\Config\Backend\Image</backend_model>
+                    <base_url type="media" scope_info="1">lof\barcode_logo</base_url>
+                    <comment><![CDATA[Allowed file types: jpg, jpeg, png]]></comment>
+                    <depends>
+                        <field id = "use_label">1</field>
+                        <field id = "display_logo">1</field>
+                    </depends>
+                </field>
+                <field id="logo_height" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="12" translate="label comment" type="text">
+                    <label>Logo Height</label>
+                    <comment>Recommended height is 50px</comment>
+                    <depends>
+                        <field id = "use_label">1</field>
+                        <field id = "display_logo">1</field>
+                    </depends>
+                    <validate>required-entry</validate>
+                </field>
+                <field id="logo_width" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="14" translate="label comment" type="text">
+                    <label>Logo Width</label>
+                    <comment>Recommended width is 150px</comment>
+                    <depends>
+                        <field id = "use_label">1</field>
+                        <field id = "display_logo">1</field>
+                    </depends>
+                    <validate>required-entry</validate>
+                </field>
+                <field id="barcode_label_content" translate="label" type="textarea" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Barcode Label Content</label>
+                    <source_model>Lof\BarcodeInventory\Model\Config\Source\LabelContent</source_model>
+                    <depends>
+                        <field id="use_label">0</field>
+                    </depends>
+                    <comment><![CDATA[Variables: {{barcode}}, {{barcode_number}}, {{product_name}}, {{product_price}},{{product_sku}}]]></comment>
+                </field>
+                <field id="barcode_label_css" translate="label" type="textarea" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Barcode Label CSS</label>
+                    <depends>
+                        <field id="use_label">0</field>
+                    </depends>
+                </field>
+            </group>
+            <group id="print_setting" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="25" translate="label">
+                <depends>
+                    <field id="barcode/general/enabled">1</field>
+                </depends>
+                <label>Barcode Print Settings</label>
+                <field id="tmp_path" translate="label" type="text" sortOrder="0" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Tmp Upload Folder Path</label>
+                    <comment><![CDATA[Example: lof/barcode/upload/tmp}]]></comment>
+                </field>
+                <field id="base_path" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Base Upload Folder Path</label>
+                    <comment><![CDATA[Example: lof/barcode/upload}]]></comment>
+                </field>
+            </group>
+            <group id="print_sample" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="30" translate="label">
+                <depends>
+                    <field id="barcode/general/enabled">1</field>
+                </depends>
+                <label>Print Sample File</label>
+                <field id="print_sample_file" translate="label comment" type="button" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <frontend_model>Lof\BarcodeInventory\Block\Adminhtml\System\Config\Button</frontend_model>
+                    <label>Print Sample</label>
+                    <comment><![CDATA[Save Config Before Print]]></comment>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

@@ -1,0 +1,33 @@
+<?xml version="1.0" ?>
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Webapi:etc/webapi.xsd">
+    <route method="GET" url="/V1/lof-barcodeinventory/generatebarcode">
+        <service class="Lof\BarcodeInventory\Api\GenerateBarcodeManagementInterface" method="getGenerateBarcode"/>
+        <resources>
+            <resource ref="Lof_BarcodeInventory::barcode_generate"/>
+        </resources>
+    </route>
+    <route method="GET" url="/V1/lof-barcodeinventory/getproductinfo/:barcode">
+        <service class="Lof\BarcodeInventory\Api\GenerateBarcodeManagementInterface" method="getProductInfo"/>
+        <resources>
+            <resource ref="Lof_BarcodeInventory::product_info"/>
+        </resources>
+    </route>
+    <route method="GET" url="/V1/lof-barcodeinventory/getallbarcode/:pageSize/:pageNumber">
+        <service class="Lof\BarcodeInventory\Api\GenerateBarcodeManagementInterface" method="getAllBarcode"/>
+        <resources>
+            <resource ref="Lof_BarcodeInventory::get_all_barcode"/>
+        </resources>
+    </route>
+    <route method="GET" url="/V1/lof-barcodeinventory/addproducttocart/:barcode/:cartId">
+        <service class="Lof\BarcodeInventory\Api\GenerateBarcodeManagementInterface" method="addProductToCartByBarcode"/>
+        <resources>
+            <resource ref="Lof_BarcodeInventory::add_product_to_cart"/>
+        </resources>
+    </route>
+    <route method="GET" url="/V1/lof-barcodeinventory/updateQty/:barcode">
+        <service class="Lof\BarcodeInventory\Api\GenerateBarcodeManagementInterface" method="updateQtyByBarcode"/>
+        <resources>
+            <resource ref="Lof_BarcodeInventory::update_qty"/>
+        </resources>
+    </route>
+</routes>
