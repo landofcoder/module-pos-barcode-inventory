@@ -1,14 +1,45 @@
 <?php
+
 namespace Lof\BarcodeInventory\Controller\Adminhtml\BarcodePrint;
 
+/**
+ * Class Download
+ * @package Lof\BarcodeInventory\Controller\Adminhtml\BarcodePrint
+ */
 class Download extends \Magento\Framework\App\Action\Action
 {
+    /**
+     * @var \Magento\Framework\App\Response\Http\FileFactory
+     */
     protected $fileFactory;
+    /**
+     * @var \Magento\Framework\File\Csv
+     */
     protected $csvProcessor;
+    /**
+     * @var \Magento\Framework\App\Filesystem\DirectoryList
+     */
     protected $directoryList;
+    /**
+     * @var \Magento\Framework\View\Result\PageFactory
+     */
     protected $resultPageFactory;
+    /**
+     * @var \Magento\Framework\App\ResourceConnection
+     */
     protected $_resource;
 
+    /**
+     * Download constructor.
+     * @param \Magento\Framework\App\Action\Context $context
+     * @param \Magento\Framework\App\Response\Http\FileFactory $fileFactory
+     * @param \Magento\Framework\File\Csv $csvProcessor
+     * @param \Magento\Framework\Filesystem $filesystem
+     * @param \Magento\Framework\App\Filesystem\DirectoryList $directoryList
+     * @param \Magento\Framework\View\Result\PageFactory $resultPageFactory
+     * @param \Magento\Framework\App\ResourceConnection $Resource
+     * @throws \Magento\Framework\Exception\FileSystemException
+     */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
         \Magento\Framework\App\Response\Http\FileFactory $fileFactory,
@@ -28,6 +59,10 @@ class Download extends \Magento\Framework\App\Action\Action
         parent::__construct($context);
     }
 
+    /**
+     * @return \Magento\Framework\App\ResponseInterface|\Magento\Framework\Controller\ResultInterface
+     * @throws \Magento\Framework\Exception\FileSystemException
+     */
     public function execute()
     {
         $fileName = "landofcoder_barcode_example.csv";
@@ -37,7 +72,7 @@ class Download extends \Magento\Framework\App\Action\Action
         $stream = $this->directory->openFile($filePath, 'w+');
         $stream->lock();
 
-        $columns = ['sku','qty'];
+        $columns = ['sku', 'qty'];
         foreach ($columns as $column) {
             $header[] = $column;
         }

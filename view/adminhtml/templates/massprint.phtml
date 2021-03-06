@@ -1,17 +1,20 @@
 <?php
-$blockObj= $block->getLayout()->createBlock('Lof\BarcodeInventory\Block\Adminhtml\Barcode\MassPrint');
+$blockObj = $block->getLayout()->createBlock('Lof\BarcodeInventory\Block\Adminhtml\Barcode\MassPrint');
 
-$collection =  $blockObj->getFoo();
+$collection = $blockObj->getCollection();
 /** @var TYPE_NAME $helper */
 $helper = $this->helper('Lof\BarcodeInventory\Helper\Data');
-$helper->generatePaperPrint($collection);
 ?>
-    <style type="text/css">
-        <?php
-            echo $helper->getCss();
-        ?>
-    </style>
-    <script>
-        window.print();
-    </script>
-<?php die;
+// doan nay se viet lenh download file pdf
+<!--<script>-->
+<!--    require([-->
+<!--        "jquery",-->
+<!--        "jquery/ui"-->
+<!--    ], function ($) {-->
+<!--        var print_window = window.open('', 'print', 'status=1,width=700,height=700');-->
+<!--        print_window.document.open();-->
+<!--        print_window.document.write(--><?//= $helper->generatePaperPrint($collection) . $helper->getCss()?>//);
+<!--//        print_window.document.close();-->
+<!--//        print_window.print();-->
+<!--//    }-->
+<!--//</script>-->

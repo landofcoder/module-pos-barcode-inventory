@@ -36,14 +36,18 @@
         </argument>
     </button>
     <columns name="product_columns">
-        <column name="barcode" sortOrder="10">
-            <settings>
-                <altField>name</altField>
-                <hasPreview>1</hasPreview>
-                <addField>true</addField>
-                <label translate="true">Barcode</label>
-                <sortable>false</sortable>
-            </settings>
+        <column name="barcode" class="Lof\BarcodeInventory\Ui\Component\Listing\Columns\Barcode">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="component" xsi:type="string">Magento_Ui/js/grid/columns/thumbnail</item>
+                    <item name="sortable" xsi:type="boolean">false</item>
+                    <item name="altField" xsi:type="string">name</item>
+                    <item name="add_field" xsi:type="boolean">true</item>
+                    <item name="has_preview" xsi:type="string">1</item>
+                    <item name="label" xsi:type="string" translate="true">Barcode</item>
+                    <item name="sortOrder" xsi:type="number">40</item>
+                </item>
+            </argument>
         </column>
     </columns>
     <modal name="test_modal">

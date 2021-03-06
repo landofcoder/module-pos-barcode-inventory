@@ -1,18 +1,23 @@
 <?php
+
 namespace Lof\BarcodeInventory\Helper;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Filesystem\DirectoryList;
+use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Response\Http\FileFactory;
 use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\File\UploaderFactory;
 use Magento\Framework\Filesystem;
 use Magento\Framework\Filesystem\Io\File;
-use Magento\Framework\App\Helper\AbstractHelper;
+use Magento\Framework\UrlInterface;
 use Magento\Store\Model\ScopeInterface;
 use Picqer\Barcode\BarcodeGeneratorPNG;
-use Magento\Framework\UrlInterface;
 
+/**
+ * Class Data
+ * @package Lof\BarcodeInventory\Helper
+ */
 class Data extends AbstractHelper
 {
     /**
@@ -39,8 +44,17 @@ class Data extends AbstractHelper
      * @var Filesystem $filesystem
      */
     protected $filesystem;
+    /**
+     *
+     */
     const BARCODE = 'barcode/';
+    /**
+     *
+     */
     const BARCODELABEL = 'barcode_label/';
+    /**
+     * @var \Magento\Catalog\Model\ProductFactory
+     */
     protected $product;
     /**
      * @var UrlInterface
@@ -76,10 +90,14 @@ class Data extends AbstractHelper
         $this->file = $file;
         $this->dir = $dir;
         $this->fileFactory = $fileFactory;
-        $this->scopeConfig=$scopeConfig;
+        $this->scopeConfig = $scopeConfig;
         $this->fileUploader = $fileUploader;
         $this->product = $product;
     }
+
+    /**
+     * @return mixed|string
+     */
     public function getCss()
     {
         $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
@@ -90,12 +108,16 @@ class Data extends AbstractHelper
             $width = $label->getLabelWidth();
             $height = $label->getLabelHeight();
             $font = $label->getFontSize();
-            $margin = $label->getMarginTop()." ".$label->getMarginRight()." ".$label->getMarginBottom()." ".$label->getMarginLeft();
+            $margin = $label->getMarginTop() . " " . $label->getMarginRight() . " " . $label->getMarginBottom() . " " . $label->getMarginLeft();
             return "$css .barcode_paper {width:$width; height: $height; margin: $margin; font-size: $font }";
         } else {
             return $this->getDesignConfig('barcode_label_css');
         }
     }
+
+    /**
+     * @param $productCollection
+     */
     public function generatePaperPrint($productCollection)
     {
         $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
@@ -112,12 +134,12 @@ class Data extends AbstractHelper
         $productCollection->addAttributeToSelect('price');
         $productCollection->addAttributeToSelect('status');
         $productCollection->addAttributeToSelect('final_price');
-        $attributes =  explode(',', $att);
+        $attributes = explode(',', $att);
         foreach ($attributes as $item) {
             $productCollection->addAttributeToSelect($item);
         }
         foreach ($productCollection as $product) {
-            if ($this->getGeneralConfig('attribute_barcode') =='sku') {
+            if ($this->getGeneralConfig('attribute_barcode') == 'sku') {
                 $code = $product->getSku();
             } else {
                 $code = $product->getBarcode();
@@ -126,7 +148,7 @@ class Data extends AbstractHelper
                 }
             }
             if ($this->getDesignConfig('use_label') == '0') {
-                $str =  $this->getDesignConfig('barcode_label_content');
+                $str = $this->getDesignConfig('barcode_label_content');
             } else {
                 $str = '';
                 if ($this->getDesignConfig('display_logo') == '1') {
@@ -134,13 +156,13 @@ class Data extends AbstractHelper
                     $height = $this->getDesignConfig('logo_height');
                     $url = str_replace("/index.php/", "/", $this->urlBuilder->getBaseUrl());
                     $logo = $this->getDesignConfig('logo');
-                    $str .= "<div class = 'row'><img width='$width' height='$height' src='".$url."media/lof/barcode_logo/".$logo."' alt='logo'></div>";
+                    $str .= "<div class = 'row'><img width='$width' height='$height' src='" . $url . "media/lof/barcode_logo/" . $logo . "' alt='logo'></div>";
                 }
                 $str .= "<div class = 'row'><b>{{product_name}}</b></div>";
                 $str .= "<div class = 'row'><b>{{barcode}}</b></div>";
                 $str .= "<div class = 'row'><b>{{barcode_number}}</b></div>";
                 $str .= "<div class = 'row'><b>{{product_price}}</b></div>";
-                $attributes =  explode(',', $att);
+                $attributes = explode(',', $att);
                 foreach ($attributes as $item) {
                     if ($product->getAttributeText($item)) {
                         $attr = $product->getAttributeText($item);
@@ -154,16 +176,22 @@ class Data extends AbstractHelper
                     $str .= "<div class = 'row'><b>$label: $attr</b></div>";
                 }
             }
-            $bar =  '<img width = "100%" src="data:image/png;base64,' . base64_encode($generator->getBarcode($code, $generator::TYPE_CODE_128)) . '">';
+            $bar = '<img width = "100%" src="data:image/png;base64,' . base64_encode($generator->getBarcode($code, $generator::TYPE_CODE_128)) . '">';
             $str = str_replace("{{product_name}}", $product->getName(), $str);
             $str = str_replace("{{barcode}}", $bar, $str);
             $str = str_replace("{{product_sku}}", $product->getSku(), $str);
-            $str = str_replace("{{product_price}}", "Price: ".$currencySymbol.(double)$product->getFinalPrice(), $str);
+            $str = str_replace("{{product_price}}", "Price: " . $currencySymbol . (double)$product->getFinalPrice(), $str);
             $str = str_replace("{{barcode_number}}", $code, $str);
             $str = "<div class=\"barcode_paper\">$str</div>";
             echo $str;
         }
     }
+
+    /**
+     * @param $productSku
+     * @param $qty
+     * @return string
+     */
     public function printPdf($productSku, $qty)
     {
         $product = $this->product->create();
@@ -174,13 +202,13 @@ class Data extends AbstractHelper
         $currency = $objectManager->create('Magento\Directory\Model\CurrencyFactory')->create()->load($currencyCode);
         $currencySymbol = $currency->getCurrencySymbol();
         $generator = new BarcodeGeneratorPNG();
-        if ($this->getGeneralConfig('attribute_barcode') =='sku') {
+        if ($this->getGeneralConfig('attribute_barcode') == 'sku') {
             $code = $product->getSku();
         } else {
             $code = $product->getBarcode();
         }
         if ($this->getDesignConfig('use_label') == '0') {
-            $str =  $this->getDesignConfig('barcode_label_content');
+            $str = $this->getDesignConfig('barcode_label_content');
         } else {
             $str = '';
             $label_id = $this->getDesignConfig('select_label');
@@ -191,14 +219,14 @@ class Data extends AbstractHelper
                 $height = $this->getDesignConfig('logo_height');
                 $url = str_replace("/index.php/", "/", $this->urlBuilder->getBaseUrl());
                 $logo = $this->getDesignConfig('logo');
-                $img = $url."media/lof/barcode_logo/".$logo;
-                $str .= "<div class = 'row'><img width='$width' height='$height' src=".$img." alt='logo' /></div>";
+                $img = $url . "media/lof/barcode_logo/" . $logo;
+                $str .= "<div class = 'row'><img width='$width' height='$height' src=" . $img . " alt='logo' /></div>";
             }
             $str .= "<div class = 'row'><b>{{product_name}}</b></div>";
             $str .= "<div class = 'row'><b>{{barcode}}</b></div>";
             $str .= "<div class = 'row'><b>{{barcode_number}}</b></div>";
             $str .= "<div class = 'row'><b>{{product_price}}</b></div>";
-            $attributes =  explode(',', $arr);
+            $attributes = explode(',', $arr);
             foreach ($attributes as $item) {
                 $collection = $product->getCollection()->addFieldToSelect($item)->addFieldToFilter('sku', $productSku);
                 foreach ($collection as $pro) {
@@ -217,11 +245,11 @@ class Data extends AbstractHelper
             }
             $str = "<div class=\"barcode_paper\">$str</div>";
         }
-        $bar =  '<img width = "100%" src="data:image/png;base64,' . base64_encode($generator->getBarcode($code, $generator::TYPE_CODE_128)) . '">';
+        $bar = '<img width = "100%" src="data:image/png;base64,' . base64_encode($generator->getBarcode($code, $generator::TYPE_CODE_128)) . '">';
         $str = str_replace("{{product_name}}", $product->getName(), $str);
         $str = str_replace("{{barcode}}", $bar, $str);
         $str = str_replace("{{product_sku}}", $product->getSku(), $str);
-        $str = str_replace("{{product_price}}", "Price: ".$currencySymbol.(double)$product->getFinalPrice(), $str);
+        $str = str_replace("{{product_price}}", "Price: " . $currencySymbol . (double)$product->getFinalPrice(), $str);
         $str = str_replace("{{barcode_number}}", $code, $str);
         $return = '';
         for ($i = 0; $i < $qty; $i++) {
@@ -229,6 +257,10 @@ class Data extends AbstractHelper
         }
         return $return;
     }
+
+    /**
+     * @param $productCollection
+     */
     public function generateBarcode($productCollection)
     {
         try {
@@ -237,7 +269,7 @@ class Data extends AbstractHelper
                 ->load();
             foreach ($collection as $product) {
                 if (!$product->getBarcode()) {
-                    $value = $product->getId()."-".$this->generateRandomString(8);
+                    $value = $product->getId() . "-" . $this->generateRandomString(8);
                     $product->addAttributeUpdate('barcode', $value, 0);
                 }
             }
@@ -246,6 +278,12 @@ class Data extends AbstractHelper
             exit;
         }
     }
+
+    /**
+     * @param $field
+     * @param null $storeId
+     * @return mixed
+     */
     public function getConfigValue($field, $storeId = null)
     {
         return $this->scopeConfig->getValue(
@@ -254,22 +292,51 @@ class Data extends AbstractHelper
             $storeId
         );
     }
+
+    /**
+     * @param $code
+     * @param null $storeId
+     * @return mixed
+     */
     public function getGeneralConfig($code, $storeId = null)
     {
-        return $this->getConfigValue(self::BARCODE .'general/'. $code, $storeId);
+        return $this->getConfigValue(self::BARCODE . 'general/' . $code, $storeId);
     }
+
+    /**
+     * @param $code
+     * @param null $storeId
+     * @return mixed
+     */
     public function getDesignConfig($code, $storeId = null)
     {
-        return $this->getConfigValue(self::BARCODE .'design/'. $code, $storeId);
+        return $this->getConfigValue(self::BARCODE . 'design/' . $code, $storeId);
     }
+
+    /**
+     * @param $code
+     * @param null $storeId
+     * @return mixed
+     */
     public function getPrintConfig($code, $storeId = null)
     {
-        return $this->getConfigValue(self::BARCODE .'print_setting/'. $code, $storeId);
+        return $this->getConfigValue(self::BARCODE . 'print_setting/' . $code, $storeId);
     }
+
+    /**
+     * @param $code
+     * @param null $storeId
+     * @return mixed
+     */
     public function getGeneralLabelConfig($code, $storeId = null)
     {
-        return $this->getConfigValue(self::BARCODELABEL .'general/'. $code, $storeId);
+        return $this->getConfigValue(self::BARCODELABEL . 'general/' . $code, $storeId);
     }
+
+    /**
+     * @param int $length
+     * @return string
+     */
     public function generateRandomString($length = 10)
     {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
