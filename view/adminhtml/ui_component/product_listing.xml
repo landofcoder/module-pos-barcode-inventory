@@ -12,6 +12,7 @@
                         <item name="type" xsi:type="string">print</item>
                         <item name="label" xsi:type="string" translate="true">Print Barcode Label</item>
                         <item name="url" xsi:type="url" path="lof_barcode/barcode/massprint"/>
+                        <item name="inNewTab" xsi:type="boolean">true</item>
                         <item name="confirm" xsi:type="array">
                             <item name="title" xsi:type="string" translate="true">Print Barcode</item>
                             <item name="message" xsi:type="string" translate="true">Are you sure you wan't to Print selected items?</item>

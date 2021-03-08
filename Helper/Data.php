@@ -120,6 +120,7 @@ class Data extends AbstractHelper
      */
     public function generatePaperPrint($productCollection)
     {
+        $results = '';
         $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
         $storeManager = $objectManager->get('Magento\Store\Model\StoreManagerInterface');
         $currencyCode = $storeManager->getStore()->getCurrentCurrencyCode();
@@ -147,7 +148,7 @@ class Data extends AbstractHelper
                     continue;
                 }
             }
-            if ($this->getDesignConfig('use_label') == '0') {
+            if (!$this->getDesignConfig('use_label')) {
                 $str = $this->getDesignConfig('barcode_label_content');
             } else {
                 $str = '';
@@ -169,22 +170,26 @@ class Data extends AbstractHelper
                     } else {
                         $attr = $product->getData($item);
                     }
-                    if (!$attr) {
-                        continue;
+                    if ($attr) {
+                        if (is_array($attr)) {
+                            $attr = implode(", ",$attr);
+                        }
+                        $label = $product->getResource()->getAttribute($item)->getFrontendLabel();
+                        $str .= "<div class = 'row'><b>$label: $attr</b></div>";
                     }
-                    $label = $product->getResource()->getAttribute($item)->getFrontendLabel();
-                    $str .= "<div class = 'row'><b>$label: $attr</b></div>";
+
                 }
             }
-            $bar = '<img width = "100%" src="data:image/png;base64,' . base64_encode($generator->getBarcode($code, $generator::TYPE_CODE_128)) . '">';
+            $bar = "<img width = '100%' src='data:image/png;base64," . base64_encode($generator->getBarcode($code, $generator::TYPE_CODE_128)) . '\'>';
             $str = str_replace("{{product_name}}", $product->getName(), $str);
             $str = str_replace("{{barcode}}", $bar, $str);
             $str = str_replace("{{product_sku}}", $product->getSku(), $str);
             $str = str_replace("{{product_price}}", "Price: " . $currencySymbol . (double)$product->getFinalPrice(), $str);
             $str = str_replace("{{barcode_number}}", $code, $str);
-            $str = "<div class=\"barcode_paper\">$str</div>";
-            echo $str;
+            $str = "<div class='barcode_paper'>$str</div>";
+            $results .= $str;
         }
+        return $results;
     }
 
     /**
@@ -243,9 +248,9 @@ class Data extends AbstractHelper
                     break;
                 }
             }
-            $str = "<div class=\"barcode_paper\">$str</div>";
+            $str = "<div class='barcode_paper'>$str</div>";
         }
-        $bar = '<img width = "100%" src="data:image/png;base64,' . base64_encode($generator->getBarcode($code, $generator::TYPE_CODE_128)) . '">';
+        $bar = "<img width = '100%' src='data:image/png;base64," . base64_encode($generator->getBarcode($code, $generator::TYPE_CODE_128)) . '">';
         $str = str_replace("{{product_name}}", $product->getName(), $str);
         $str = str_replace("{{barcode}}", $bar, $str);
         $str = str_replace("{{product_sku}}", $product->getSku(), $str);
