@@ -2,16 +2,21 @@
 
 namespace Lof\BarcodeInventory\Helper;
 
+use Magento\Catalog\Model\ProductFactory;
+use Magento\Directory\Model\CurrencyFactory;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\App\Helper\AbstractHelper;
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\App\Response\Http\FileFactory;
 use Magento\Framework\Exception\FileSystemException;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\File\UploaderFactory;
 use Magento\Framework\Filesystem;
 use Magento\Framework\Filesystem\Io\File;
 use Magento\Framework\UrlInterface;
 use Magento\Store\Model\ScopeInterface;
+use Magento\Store\Model\StoreManagerInterface;
 use Picqer\Barcode\BarcodeGeneratorPNG;
 
 /**
@@ -53,13 +58,29 @@ class Data extends AbstractHelper
      */
     const BARCODELABEL = 'barcode_label/';
     /**
-     * @var \Magento\Catalog\Model\ProductFactory
+     * @var ProductFactory
      */
     protected $product;
     /**
      * @var UrlInterface
      */
     private $urlBuilder;
+    /**
+     * @var StoreManagerInterface
+     */
+    private $storeManager;
+    /**
+     * @var CurrencyFactory
+     */
+    private $currencyFactory;
+    /**
+     * @var BarcodeGeneratorPNG
+     */
+    private $barcodeGeneratorPNG;
+    /**
+     * @var \Magento\Framework\Pricing\Helper\Data
+     */
+    private $priceHelper;
 
 
     /**
@@ -70,8 +91,12 @@ class Data extends AbstractHelper
      * @param Filesystem\DirectoryList $dir
      * @param ScopeConfigInterface $scopeConfig
      * @param Filesystem $filesystem
-     * @param \Magento\Catalog\Model\ProductFactory $product
+     * @param UrlInterface $urlBuilder
+     * @param ProductFactory $product
      * @param UploaderFactory $fileUploader $fileFactory
+     * @param StoreManagerInterface $storeManager
+     * @param BarcodeGeneratorPNG $barcodeGeneratorPNG
+     * @param \Magento\Framework\Pricing\Helper\Data $priceHelper
      * @throws FileSystemException
      */
     public function __construct(
@@ -81,8 +106,11 @@ class Data extends AbstractHelper
         ScopeConfigInterface $scopeConfig,
         Filesystem $filesystem,
         UrlInterface $urlBuilder,
-        \Magento\Catalog\Model\ProductFactory $product,
-        UploaderFactory $fileUploader
+        ProductFactory $product,
+        UploaderFactory $fileUploader,
+        StoreManagerInterface $storeManager,
+        BarcodeGeneratorPNG $barcodeGeneratorPNG,
+        \Magento\Framework\Pricing\Helper\Data $priceHelper
     ) {
         $this->filesystem = $filesystem;
         $this->urlBuilder = $urlBuilder;
@@ -93,6 +121,9 @@ class Data extends AbstractHelper
         $this->scopeConfig = $scopeConfig;
         $this->fileUploader = $fileUploader;
         $this->product = $product;
+        $this->storeManager = $storeManager;
+        $this->barcodeGeneratorPNG = $barcodeGeneratorPNG;
+        $this->priceHelper  = $priceHelper;
     }
 
     /**
@@ -100,7 +131,7 @@ class Data extends AbstractHelper
      */
     public function getCss()
     {
-        $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+        $objectManager = ObjectManager::getInstance();
         $label_id = $this->getDesignConfig('select_label');
         if ($label_id && $this->getDesignConfig('use_label') == "1") {
             $css = $this->getDesignConfig('barcode_label_css');
@@ -117,19 +148,16 @@ class Data extends AbstractHelper
 
     /**
      * @param $productCollection
+     * @return string
+     * @throws NoSuchEntityException
      */
     public function generatePaperPrint($productCollection)
     {
         $results = '';
-        $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-        $storeManager = $objectManager->get('Magento\Store\Model\StoreManagerInterface');
-        $currencyCode = $storeManager->getStore()->getCurrentCurrencyCode();
-        $currency = $objectManager->create('Magento\Directory\Model\CurrencyFactory')->create()->load($currencyCode);
-        $currencySymbol = $currency->getCurrencySymbol();
+        $objectManager = ObjectManager::getInstance();
         $label_id = $this->getDesignConfig('select_label');
         $label = $objectManager->create('Lof\BarcodeLabel\Model\Label');
         $att = $label->load($label_id)->getProductAttribute();
-        $generator = new BarcodeGeneratorPNG();
         $productCollection->addAttributeToSelect('barcode');
         $productCollection->addAttributeToSelect('name');
         $productCollection->addAttributeToSelect('price');
@@ -140,52 +168,7 @@ class Data extends AbstractHelper
             $productCollection->addAttributeToSelect($item);
         }
         foreach ($productCollection as $product) {
-            if ($this->getGeneralConfig('attribute_barcode') == 'sku') {
-                $code = $product->getSku();
-            } else {
-                $code = $product->getBarcode();
-                if (!$code) {
-                    continue;
-                }
-            }
-            if (!$this->getDesignConfig('use_label')) {
-                $str = $this->getDesignConfig('barcode_label_content');
-            } else {
-                $str = '';
-                if ($this->getDesignConfig('display_logo') == '1') {
-                    $width = $this->getDesignConfig('logo_width');
-                    $height = $this->getDesignConfig('logo_height');
-                    $url = str_replace("/index.php/", "/", $this->urlBuilder->getBaseUrl());
-                    $logo = $this->getDesignConfig('logo');
-                    $str .= "<div class = 'row'><img width='$width' height='$height' src='" . $url . "media/lof/barcode_logo/" . $logo . "' alt='logo'></div>";
-                }
-                $str .= "<div class = 'row'><b>{{product_name}}</b></div>";
-                $str .= "<div class = 'row'><b>{{barcode}}</b></div>";
-                $str .= "<div class = 'row'><b>{{barcode_number}}</b></div>";
-                $str .= "<div class = 'row'><b>{{product_price}}</b></div>";
-                $attributes = explode(',', $att);
-                foreach ($attributes as $item) {
-                    if ($product->getAttributeText($item)) {
-                        $attr = $product->getAttributeText($item);
-                    } else {
-                        $attr = $product->getData($item);
-                    }
-                    if ($attr) {
-                        if (is_array($attr)) {
-                            $attr = implode(", ",$attr);
-                        }
-                        $label = $product->getResource()->getAttribute($item)->getFrontendLabel();
-                        $str .= "<div class = 'row'><b>$label: $attr</b></div>";
-                    }
-
-                }
-            }
-            $bar = "<img width = '100%' src='data:image/png;base64," . base64_encode($generator->getBarcode($code, $generator::TYPE_CODE_128)) . '\'>';
-            $str = str_replace("{{product_name}}", $product->getName(), $str);
-            $str = str_replace("{{barcode}}", $bar, $str);
-            $str = str_replace("{{product_sku}}", $product->getSku(), $str);
-            $str = str_replace("{{product_price}}", "Price: " . $currencySymbol . (double)$product->getFinalPrice(), $str);
-            $str = str_replace("{{barcode_number}}", $code, $str);
+            $str = $this->generateLabel($product);
             $str = "<div class='barcode_paper'>$str</div>";
             $results .= $str;
         }
@@ -201,61 +184,7 @@ class Data extends AbstractHelper
     {
         $product = $this->product->create();
         $product->load($product->getIdBySku($productSku));
-        $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-        $storeManager = $objectManager->get('Magento\Store\Model\StoreManagerInterface');
-        $currencyCode = $storeManager->getStore()->getCurrentCurrencyCode();
-        $currency = $objectManager->create('Magento\Directory\Model\CurrencyFactory')->create()->load($currencyCode);
-        $currencySymbol = $currency->getCurrencySymbol();
-        $generator = new BarcodeGeneratorPNG();
-        if ($this->getGeneralConfig('attribute_barcode') == 'sku') {
-            $code = $product->getSku();
-        } else {
-            $code = $product->getBarcode();
-        }
-        if ($this->getDesignConfig('use_label') == '0') {
-            $str = $this->getDesignConfig('barcode_label_content');
-        } else {
-            $str = '';
-            $label_id = $this->getDesignConfig('select_label');
-            $label = $objectManager->create('Lof\BarcodeLabel\Model\Label');
-            $arr = $label->load($label_id)->getProductAttribute();
-            if ($this->getDesignConfig('display_logo') == '1') {
-                $width = $this->getDesignConfig('logo_width');
-                $height = $this->getDesignConfig('logo_height');
-                $url = str_replace("/index.php/", "/", $this->urlBuilder->getBaseUrl());
-                $logo = $this->getDesignConfig('logo');
-                $img = $url . "media/lof/barcode_logo/" . $logo;
-                $str .= "<div class = 'row'><img width='$width' height='$height' src=" . $img . " alt='logo' /></div>";
-            }
-            $str .= "<div class = 'row'><b>{{product_name}}</b></div>";
-            $str .= "<div class = 'row'><b>{{barcode}}</b></div>";
-            $str .= "<div class = 'row'><b>{{barcode_number}}</b></div>";
-            $str .= "<div class = 'row'><b>{{product_price}}</b></div>";
-            $attributes = explode(',', $arr);
-            foreach ($attributes as $item) {
-                $collection = $product->getCollection()->addFieldToSelect($item)->addFieldToFilter('sku', $productSku);
-                foreach ($collection as $pro) {
-                    if ($pro->getAttributeText('barcode')) {
-                        $att = $pro->getAttributeText('barcode');
-                    } else {
-                        $att = $pro->getData($item);
-                    }
-                    if (!$att) {
-                        continue;
-                    }
-                    $label = $pro->getResource()->getAttribute($item)->getFrontendLabel();
-                    $str .= "<div class = 'row'><b>$label: $att</b></div>";
-                    break;
-                }
-            }
-            $str = "<div class='barcode_paper'>$str</div>";
-        }
-        $bar = "<img width = '100%' src='data:image/png;base64," . base64_encode($generator->getBarcode($code, $generator::TYPE_CODE_128)) . '">';
-        $str = str_replace("{{product_name}}", $product->getName(), $str);
-        $str = str_replace("{{barcode}}", $bar, $str);
-        $str = str_replace("{{product_sku}}", $product->getSku(), $str);
-        $str = str_replace("{{product_price}}", "Price: " . $currencySymbol . (double)$product->getFinalPrice(), $str);
-        $str = str_replace("{{barcode_number}}", $code, $str);
+        $str = $this->generateLabel($product);
         $return = '';
         for ($i = 0; $i < $qty; $i++) {
             $return .= $str;
@@ -269,7 +198,6 @@ class Data extends AbstractHelper
     public function generateBarcode($productCollection)
     {
         try {
-            $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
             $collection = $productCollection->addAttributeToSelect('*')
                 ->load();
             foreach ($collection as $product) {
@@ -329,16 +257,6 @@ class Data extends AbstractHelper
     }
 
     /**
-     * @param $code
-     * @param null $storeId
-     * @return mixed
-     */
-    public function getGeneralLabelConfig($code, $storeId = null)
-    {
-        return $this->getConfigValue(self::BARCODELABEL . 'general/' . $code, $storeId);
-    }
-
-    /**
      * @param int $length
      * @return string
      */
@@ -351,5 +269,77 @@ class Data extends AbstractHelper
             $randomString .= $characters[rand(0, $charactersLength - 1)];
         }
         return $randomString;
+    }
+
+    /**
+     * @param $code
+     * @return string
+     */
+    public function getBase64Barcode($code){
+        return base64_encode($this->barcodeGeneratorPNG->getBarcode($code, $this->barcodeGeneratorPNG::TYPE_CODE_128));
+    }
+
+    /**
+     * @param $price
+     * @return float|string
+     */
+    public function formatPrice($price){
+        return $this->priceHelper->currency($price,true,false);
+    }
+
+    /**
+     * @param $product
+     * @return string|string[]
+     */
+    public function generateLabel($product){
+        if ($this->getGeneralConfig('attribute_barcode') == 'sku') {
+            $code = $product->getSku();
+        } else {
+            $code = $product->getBarcode();
+        }
+        $str = '';
+        if ($code) {
+            if (!$this->getDesignConfig('use_label')) {
+                $str = $this->getDesignConfig('barcode_label_content');
+            } else {
+                $objectManager = ObjectManager::getInstance();
+                $label_id = $this->getDesignConfig('select_label');
+                $label = $objectManager->create('Lof\BarcodeLabel\Model\Label');
+                $arr = $label->load($label_id)->getProductAttribute();
+                if ($this->getDesignConfig('display_logo')) {
+                    $width = $this->getDesignConfig('logo_width');
+                    $height = $this->getDesignConfig('logo_height');
+                    $url = str_replace("/index.php/", "/", $this->urlBuilder->getBaseUrl());
+                    $logo = $this->getDesignConfig('logo');
+                    $img = $url . "media/lof/barcode_logo/" . $logo;
+                    $str .= "<div class = 'row'><img width='$width' height='$height' src=" . $img . " alt='logo' /></div>";
+                }
+                $str .= "<div class = 'row'><b>{{product_name}}</b></div>";
+                $str .= "<div class = 'row'><b>{{barcode}}</b></div>";
+                $str .= "<div class = 'row'><b>{{barcode_number}}</b></div>";
+                $str .= "<div class = 'row'><b>{{product_price}}</b></div>";
+                $attributes = explode(',', $arr);
+                foreach ($attributes as $item) {
+                    if ($product->getAttributeText('barcode')) {
+                        $att = $product->getAttributeText('barcode');
+                    } else {
+                        $att = $product->getData($item);
+                    }
+                    if (!$att) {
+                        continue;
+                    }
+                    $label = $product->getResource()->getAttribute($item)->getFrontendLabel();
+                    $str .= "<div class = 'row'><b>$label: $att</b></div>";
+                }
+                $str = "<div class='barcode_paper'>$str</div>";
+            }
+            $bar = "<img width = '100%' src='data:image/png;base64," . $this->getBase64Barcode($code) . '\'>';
+            $str = str_replace("{{product_name}}", $product->getName(), $str);
+            $str = str_replace("{{barcode}}", $bar, $str);
+            $str = str_replace("{{product_sku}}", $product->getSku(), $str);
+            $str = str_replace("{{product_price}}", "Price: " . $this->formatPrice($product->getFinalPrice()), $str);
+            $str = str_replace("{{barcode_number}}", $code, $str);
+        }
+        return $str;
     }
 }
