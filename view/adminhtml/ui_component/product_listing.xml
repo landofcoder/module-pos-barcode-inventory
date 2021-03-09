@@ -1,24 +1,16 @@
 <listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
     <listingToolbar name="listing_top">
-        <massaction name="listing_massaction" component="Magento_Ui/js/grid/tree-massactions">
-            <argument name="data" xsi:type="array">
-                <item name="config" xsi:type="array">
-                    <item name="component" xsi:type="string">Magento_Ui/js/grid/tree-massactions</item>
-                </item>
-            </argument>
-            <action name="print">
-                <argument name="data" xsi:type="array">
-                    <item name="config" xsi:type="array">
-                        <item name="type" xsi:type="string">print</item>
-                        <item name="label" xsi:type="string" translate="true">Print Barcode Label</item>
-                        <item name="url" xsi:type="url" path="lof_barcode/barcode/massprint"/>
-                        <item name="inNewTab" xsi:type="boolean">true</item>
-                        <item name="confirm" xsi:type="array">
-                            <item name="title" xsi:type="string" translate="true">Print Barcode</item>
-                            <item name="message" xsi:type="string" translate="true">Are you sure you wan't to Print selected items?</item>
-                        </item>
-                    </item>
-                </argument>
+        <massaction name="listing_massaction">
+            <action name="print_barcode">
+                <settings>
+                    <label translate="true">Print Barcode Label</label>
+                    <type>print_barcode</type>
+                    <url path="lof_barcode/barcode/massPrint"/>
+                    <confirm>
+                        <message translate="true">Are you sure you wan't to Print selected items?</message>
+                        <title translate="true">Print Barcode</title>
+                    </confirm>
+                </settings>
             </action>
         </massaction>
         <paging name="listing_paging"/>

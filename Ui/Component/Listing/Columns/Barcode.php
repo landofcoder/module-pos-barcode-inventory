@@ -1,14 +1,13 @@
 <?php
 namespace Lof\BarcodeInventory\Ui\Component\Listing\Columns;
 
+use Lof\BarcodeInventory\Helper\Data;
 use Magento\Catalog\Helper\Image;
-use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\UrlInterface;
 use Magento\Framework\View\Element\UiComponentFactory;
 use Magento\Framework\View\Element\UiComponent\ContextInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Ui\Component\Listing\Columns\Column;
-use Picqer\Barcode\BarcodeGeneratorPNG;
 
 /**
  * Class Barcode
@@ -30,9 +29,9 @@ class Barcode extends Column
      */
     private $urlBuilder;
     /**
-     * @var BarcodeGeneratorPNG
+     * @var Data
      */
-    private $barcodeGenerator;
+    private $helper;
 
     /**
      * @param ContextInterface $context
@@ -40,7 +39,7 @@ class Barcode extends Column
      * @param Image $imageHelper
      * @param UrlInterface $urlBuilder
      * @param StoreManagerInterface $storeManager
-     * @param BarcodeGeneratorPNG $barcodeGeneratorPNG
+     * @param Data $helper
      * @param array $components
      * @param array $data
      */
@@ -50,14 +49,14 @@ class Barcode extends Column
         Image $imageHelper,
         UrlInterface $urlBuilder,
         StoreManagerInterface $storeManager,
-        BarcodeGeneratorPNG $barcodeGeneratorPNG,
+        Data $helper,
         array $components = [],
         array $data = []
     ) {
         $this->storeManager = $storeManager;
         $this->imageHelper = $imageHelper;
         $this->urlBuilder = $urlBuilder;
-        $this->barcodeGenerator = $barcodeGeneratorPNG;
+        $this->helper = $helper;
         parent::__construct($context, $uiComponentFactory, $components, $data);
     }
 
@@ -66,15 +65,19 @@ class Barcode extends Column
      *
      * @param array $dataSource
      * @return array
-     * @throws NoSuchEntityException
      */
     public function prepareDataSource(array $dataSource)
     {
         if (isset($dataSource['data']['items'])) {
             $fieldName = $this->getData('name');
+            if ($this->helper->getGeneralConfig('attribute_barcode') == 'sku') {
+                $barcode = 'sku';
+            } else {
+                $barcode = 'barcode';
+            }
             foreach ($dataSource['data']['items'] as & $item) {
-                if (isset($item[$fieldName])) {
-                    $url = 'data:image/png;base64,' . base64_encode($this->barcodeGenerator->getBarcode($item[$fieldName], $this->barcodeGenerator::TYPE_CODE_128));
+                if (isset($item[$barcode])) {
+                    $url = 'data:image/png;base64,' . $this->helper->getBase64Barcode($item[$barcode]);
                     $item[$fieldName . '_src'] = $url;
                     $item[$fieldName . '_alt'] = $this->getAlt($item) ?: '';
                     $item[$fieldName . '_orig_src'] = $url;

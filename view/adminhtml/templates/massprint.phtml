@@ -8,6 +8,7 @@ $collection = $block->getCollection();
 $helper = $this->helper('Lof\BarcodeInventory\Helper\Data');
 $css = "<style>".$helper->getCss()."</style>";
 $html = $block->escapeJs($helper->generatePaperPrint($collection).$css);
+$url = $block->getUrl('catalog/product');
 ?>
 <script>
     var print_window = window.open('', 'print', 'status=1,width=700,height=700');
@@ -15,4 +16,6 @@ $html = $block->escapeJs($helper->generatePaperPrint($collection).$css);
     print_window.document.write("<?=$html?>");
     print_window.document.close();
     print_window.print();
+    window.location.href = "<?=$url?>";
 </script>
+<?php

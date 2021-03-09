@@ -33,21 +33,11 @@ class MassPrint extends \Magento\Backend\Block\Template
     }
 
     /**
-     * @param $asset
-     * @return mixed
-     */
-    public function getAssetUrl($asset)
-    {
-        $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-        $assetRepository = $objectManager->get('Magento\Framework\View\Asset\Repository');
-        return $assetRepository->createAsset($asset)->getUrl();
-    }
-
-    /**
      * @return mixed|null
      */
     public function getCollection()
     {
         return $this->_coreRegistry->registry('collection');
     }
+
 }

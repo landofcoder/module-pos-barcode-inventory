@@ -98,6 +98,9 @@ class MassPrint extends \Magento\Backend\App\Action implements HttpPostActionInt
         $collectionSize = $collection->getSize();
         $this->_coreRegistry->register('collection', $collection);
         $this->messageManager->addSuccessMessage(__('A total of %1 barcode(s) have been printed.', $collectionSize));
+        $resultPage = $this->_pageFactory->create();
+        $resultPage->addHandle('print');
+        return $resultPage;
         return $this->_pageFactory->create();
     }
 }
