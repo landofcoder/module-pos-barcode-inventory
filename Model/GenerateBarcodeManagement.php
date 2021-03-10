@@ -2,16 +2,34 @@
 
 namespace Lof\BarcodeInventory\Model;
 
+use Lof\BarcodeInventory\Helper\Data;
+use Magento\Catalog\Model\ProductFactory;
+use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
+use Magento\CatalogInventory\Api\StockRegistryInterface;
+use Magento\Checkout\Model\Cart;
+use Magento\Framework\Data\Form\FormKey;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Module\Manager;
+use Magento\Framework\ObjectManagerInterface;
+use Magento\Quote\Model\QuoteFactory;
 use Picqer\Barcode\BarcodeGeneratorPNG;
 use Psr\Log\LoggerInterface;
 
+/**
+ * Class GenerateBarcodeManagement
+ * @package Lof\BarcodeInventory\Model
+ */
 class GenerateBarcodeManagement implements \Lof\BarcodeInventory\Api\GenerateBarcodeManagementInterface
 {
+    /**
+     * @var Data
+     */
     protected $helper;
+    /**
+     * @var ObjectManagerInterface
+     */
     private $_objectManager;
 
-    private $collection;
     /**
      * @var BarcodeGeneratorPNG
      */
@@ -21,45 +39,59 @@ class GenerateBarcodeManagement implements \Lof\BarcodeInventory\Api\GenerateBar
      */
     private $product;
     /**
-     * @var \Magento\Framework\Module\Manager
+     * @var Manager
      */
     private $_moduleManager;
     /**
-     * @var \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory
+     * @var CollectionFactory
      */
     private $productCollectionFactory;
     /**
-     * @var \Magento\Framework\Data\Form\FormKey
+     * @var FormKey
      */
     private $formKey;
     /**
-     * @var \Magento\Checkout\Model\Cart
+     * @var Cart
      */
     private $cart;
     /**
-     * @var \Magento\CatalogInventory\Api\StockStateInterface
-     */
-    private $stockItem;
-    /**
-     * @var \Magento\Quote\Model\QuoteFactory
+     * @var QuoteFactory
      */
     private $quoteFactory;
     /**
-     * @var \Magento\CatalogInventory\Api\StockRegistryInterface
+     * @var StockRegistryInterface
      */
     private $stockRegistry;
+    /**
+     * @var mixed|LoggerInterface|null
+     */
+    private $logger;
 
+    /**
+     * GenerateBarcodeManagement constructor.
+     * @param Data $helper
+     * @param BarcodeGeneratorPNG $generator
+     * @param FormKey $formKey
+     * @param Cart $cart
+     * @param ProductFactory $product
+     * @param StockRegistryInterface $stockRegistry
+     * @param Manager $moduleManager
+     * @param ObjectManagerInterface $objectmanager
+     * @param CollectionFactory $productCollectionFactory
+     * @param QuoteFactory $quoteFactory
+     * @param LoggerInterface|null $logger
+     */
     public function __construct(
-        \Lof\BarcodeInventory\Helper\Data $helper,
+        Data $helper,
         BarcodeGeneratorPNG $generator,
-        \Magento\Framework\Data\Form\FormKey $formKey,
-        \Magento\Checkout\Model\Cart $cart,
-        \Magento\Catalog\Model\ProductFactory $product,
-        \Magento\CatalogInventory\Api\StockRegistryInterface $stockRegistry,
-        \Magento\Framework\Module\Manager $moduleManager,
-        \Magento\Framework\ObjectManagerInterface $objectmanager,
-        \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $productCollectionFactory,
-        \Magento\Quote\Model\QuoteFactory $quoteFactory,
+        FormKey $formKey,
+        Cart $cart,
+        ProductFactory $product,
+        StockRegistryInterface $stockRegistry,
+        Manager $moduleManager,
+        ObjectManagerInterface $objectmanager,
+        CollectionFactory $productCollectionFactory,
+        QuoteFactory $quoteFactory,
         LoggerInterface $logger = null
     ) {
         $this->helper = $helper;
@@ -79,77 +111,96 @@ class GenerateBarcodeManagement implements \Lof\BarcodeInventory\Api\GenerateBar
      */
     public function getGenerateBarcode()
     {
-        $this->generator = new \Picqer\Barcode\BarcodeGeneratorPNG();
         $productCollection = $this->productCollectionFactory->create();
-        $this->helper->generateBarcode($productCollection, $this->generator);
+        $this->helper->generateBarcode($productCollection);
         return "Barcodes generated!";
     }
+
+    /**
+     * @param string $barcode
+     * @return array|mixed|string
+     */
     public function getProductInfo($barcode)
     {
-        $productbysku = $this->productCollectionFactory->create()->addFieldToFilter('sku', $barcode);
-        $productbybarcode = $this->productCollectionFactory->create()->addFieldToFilter('barcode', $barcode);
-        if ($productbysku->getData()) {
-            return $productbysku->getData();
-        } elseif ($productbybarcode->getData()) {
-            return $productbybarcode->getData();
+        $productBySku = $this->productCollectionFactory->create()->addFieldToFilter('sku', $barcode)->getFirstItem();
+        $productByBarcode = $this->productCollectionFactory->create()->addFieldToFilter('barcode', $barcode)->getFirstItem();
+        $productData = [];
+        if ($productBySku->getData()) {
+            $productData = $productBySku->getData();
+            $productData['model'] = $productBySku;
+        } elseif ($productByBarcode->getData()) {
+            $productData = $productByBarcode->getData();
+            $productData['model'] = $productByBarcode;
         } elseif ($this->_moduleManager->isEnabled('Lof_MultiBarcode')) {
-            $multiQtyBarcode = $this->_objectManager->create("Lof\MultiBarcode\Model\ResourceModel\Barcode\Collection")->addFieldToFilter('barcode', $barcode);
+            $multiQtyBarcode = $this->_objectManager->create("Lof\MultiBarcode\Model\ResourceModel\Barcode\Collection")
+                ->addFieldToFilter('barcode', $barcode)->getFirstItem();
             if ($multiQtyBarcode->getData()) {
-                $productId = $multiQtyBarcode->getData()['0']['product_id'];
+                $productId = $multiQtyBarcode->getData('product_id');
                 $product = $this->product->create()->load($productId);
-                return [$product->getData()];
-            } else {
-                return "Barcode does not exists";
+                $productData = $product->getData();
+                $productData['model'] = $product;
             }
-        } else {
-            return "Barcode does not exists";
         }
+        return $productData;
     }
+
+    /**
+     * @param int $pageSize
+     * @param int $pageNumber
+     * @return array[]|mixed
+     */
     public function getAllBarcode($pageSize, $pageNumber)
     {
+        $key = 0;
+        $lastPage = 0;
+        $list = [];
         if ($this->_moduleManager->isEnabled('Lof_MultiBarcode')) {
-            $multiQtyCollection = $this->_objectManager->create("Lof\MultiBarcode\Model\ResourceModel\Barcode\Collection")->setPageSize($pageSize)->setCurPage($pageNumber);
-            foreach ($multiQtyCollection as $key => $item) {
+            $multiQtyCollection = $this->_objectManager->create("Lof\MultiBarcode\Model\ResourceModel\Barcode\Collection")
+                ->setPageSize($pageSize)
+                ->setCurPage($pageNumber);
+            foreach ($multiQtyCollection as $item) {
                 $barcode = $item->getBarcode();
                 $productId = $item->getProductId();
                 $qty =  $item->getQty();
-                $whcode =  $item->getWarehouseCode();
+                $whCode =  $item->getWarehouseCode();
                 $source =  $item->getSource();
-                $obj = ["barcode"=>$barcode, "product_id"=>$productId, "qty"=>$qty, "warehouse_code"=> $whcode, "source_code"=> $source];
+                $obj = ["barcode"=>$barcode, "product_id"=>$productId, "qty"=>$qty, "warehouse_code"=> $whCode, "source_code"=> $source];
                 $list[$key] = $obj;
+                $key++;
             }
-            $lastpage = $multiQtyCollection->getLastPageNumber();
-            if (!isset($list)) {
-                $list = "";
-            }
-            return ['data' => array('total_page' => $lastpage, 'list' => $list)];
-        } else {
-            $collection = $this->productCollectionFactory->create()->addAttributeToSelect('barcode')->addFieldToFilter(
-                'barcode',
-                ['neq' => 'NULL']
-            )->setPageSize($pageSize)->setCurPage($pageNumber);
-            $list = [];
-            foreach ($collection as $key => $product) {
-                $barcode = $product->getBarcode();
-                if ($barcode) {
-                    $productId = $product->getId();
-                    $qty = "1";
-                    $obj = ["barcode"=>$barcode, "product_id"=>$productId, "qty"=>$qty, "warehouse_code"=> null, "source_code"=> null];
-                    $list[$key] = $obj;
-                }
-            }
-            if (!isset($list)) {
-                $list = "";
-            }
-            $lastpage = $collection->getLastPageNumber();
-            return ['data' => array('total_page' => $lastpage, 'list' => $list)];
+            $lastPage += $multiQtyCollection->getLastPageNumber();
         }
+        $collection = $this->productCollectionFactory->create()->addAttributeToSelect('barcode')->addFieldToFilter(
+            'barcode',
+            ['neq' => 'NULL']
+        )->setPageSize($pageSize)->setCurPage($pageNumber);
+        foreach ($collection as $product) {
+            $barcode = $product->getBarcode();
+            if ($barcode) {
+                $productId = $product->getId();
+                $qty = "1";
+                $obj = ["barcode"=>$barcode, "product_id"=>$productId, "qty"=>$qty, "warehouse_code"=> null, "source_code"=> null];
+                $list[$key] = $obj;
+                $key++;
+            }
+        }
+        if (!isset($list)) {
+            $list = "";
+        }
+        $lastPage += $collection->getLastPageNumber();
+        return ['total_page' => $lastPage, 'items' => $list];
     }
+
+    /**
+     * @param string $barcode
+     * @param string $cartId
+     * @return mixed|string
+     */
     public function addProductToCartByBarcode($barcode, $cartId)
     {
-        $productbybarcode = $this->productCollectionFactory->create()->addFieldToFilter('barcode', $barcode)->getFirstItem();
-        if (!$this->_moduleManager->isEnabled('Lof_MultiBarcode') && $productbybarcode->getData()) {
-            $productId = $productbybarcode->getId();
+        $productByBarcode = $this->productCollectionFactory->create()->addFieldToFilter('barcode', $barcode)->getFirstItem();
+        if (!$this->_moduleManager->isEnabled('Lof_MultiBarcode') && $productByBarcode->getData()) {
+            $productId = $productByBarcode->getId();
             $qty = 1;
         } elseif ($this->_moduleManager->isEnabled('Lof_MultiBarcode')) {
             $multiQtyBarcode = $this->_objectManager->create("Lof\MultiBarcode\Model\ResourceModel\Barcode\Collection")->addFieldToFilter('barcode', $barcode)->getFirstItem();
@@ -168,7 +219,7 @@ class GenerateBarcodeManagement implements \Lof\BarcodeInventory\Api\GenerateBar
                 $cart = $this->cart;
                 if ($cartId != "0") {
                     $cart->getQuote()->load($cartId);
-                } 
+                }
                 $cart->addProduct($_product, $params);
                 $cart->save();
             } catch (LocalizedException $e) {
@@ -179,17 +230,23 @@ class GenerateBarcodeManagement implements \Lof\BarcodeInventory\Api\GenerateBar
             return "Barcode does not exists";
         }
     }
+
+    /**
+     * @param string $barcode
+     * @return mixed|string
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
     public function updateQtyByBarcode($barcode)
     {
-        $productbybarcode = $this->productCollectionFactory->create()->addFieldToFilter('barcode', $barcode)->getFirstItem();
-        $productbysku = $this->productCollectionFactory->create()->addFieldToFilter('sku', $barcode)->getFirstItem();
-        if ($productbybarcode->getData()) {
-            $sku =$productbybarcode->getSku();
+        $productByBarcode = $this->productCollectionFactory->create()->addFieldToFilter('barcode', $barcode)->getFirstItem();
+        $productBySku = $this->productCollectionFactory->create()->addFieldToFilter('sku', $barcode)->getFirstItem();
+        if ($productByBarcode->getData()) {
+            $sku =$productByBarcode->getSku();
             $stockItem = $this->stockRegistry->getStockItemBySku($sku);
             $stockItem->setQty($stockItem->getQty()+1);
             $stockItem->setIsInStock((bool)1);
             $this->stockRegistry->updateStockItemBySku($sku, $stockItem);
-        } elseif ($productbysku->getData()) {
+        } elseif ($productBySku->getData()) {
             $sku = $barcode;
             $stockItem = $this->stockRegistry->getStockItemBySku($sku);
             $stockItem->setQty($stockItem->getQty()+1);

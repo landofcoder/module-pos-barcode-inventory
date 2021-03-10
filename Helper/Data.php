@@ -70,10 +70,6 @@ class Data extends AbstractHelper
      */
     private $storeManager;
     /**
-     * @var CurrencyFactory
-     */
-    private $currencyFactory;
-    /**
      * @var BarcodeGeneratorPNG
      */
     private $barcodeGeneratorPNG;
@@ -149,7 +145,6 @@ class Data extends AbstractHelper
     /**
      * @param $productCollection
      * @return string
-     * @throws NoSuchEntityException
      */
     public function generatePaperPrint($productCollection)
     {

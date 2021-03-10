@@ -1,30 +1,39 @@
 <?php
 namespace Lof\BarcodeInventory\Block\Adminhtml\System\Config;
 
+use Magento\Backend\Model\UrlInterface;
 use Magento\Config\Block\System\Config\Form\Field;
 use Magento\Backend\Block\Template\Context;
 use Magento\Framework\Data\Form\Element\AbstractElement;
 
+/**
+ * Class Button
+ * @package Lof\BarcodeInventory\Block\Adminhtml\System\Config
+ */
 class Button extends Field
 {
     /**
-     * @param \Magento\Backend\Model\UrlInterface $backendUrl
-     * @param \Magento\Backend\Block\Template\Context $context
+     * @var UrlInterface
+     */
+    private $_backendUrl;
+
+    /**
+     * @param UrlInterface $backendUrl
+     * @param Context $context
      * @param array $data
      */
     public function __construct(
-        \Magento\Backend\Model\UrlInterface $backendUrl,
-        \Magento\Backend\Block\Template\Context $context,
+        UrlInterface $backendUrl,
+        Context $context,
         array $data = []
     ) {
         $this->_backendUrl = $backendUrl;
         parent::__construct($context, $data);
     }
+
     /**
-     * Add color picker
-     *
-     * @param Varien_Data_Form_Element_Abstract $element
-     * @return String
+     * @param AbstractElement $element
+     * @return string
      */
     protected function _getElementHtml(\Magento\Framework\Data\Form\Element\AbstractElement $element)
     {
@@ -46,7 +55,7 @@ class Button extends Field
             ],
             function($) {
                 $('#print').on('click', function(){
-                    
+
                     window.open('$url.');
                 });
         });</script>";

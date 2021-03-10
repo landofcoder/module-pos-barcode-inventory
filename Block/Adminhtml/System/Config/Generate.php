@@ -11,6 +11,11 @@ use Magento\Backend\Model\UrlInterface;
 class Generate extends \Magento\Config\Block\System\Config\Form\Field
 {
     /**
+     * @var UrlInterface
+     */
+    private $_backendUrl;
+
+    /**
      * @param UrlInterface $backendUrl
      * @param Context $context
      * @param array $data
@@ -23,11 +28,10 @@ class Generate extends \Magento\Config\Block\System\Config\Form\Field
         $this->_backendUrl = $backendUrl;
         parent::__construct($context, $data);
     }
+
     /**
-     * Add color picker
-     *
-     * @param Varien_Data_Form_Element_Abstract $element
-     * @return String
+     * @param \Magento\Framework\Data\Form\Element\AbstractElement $element
+     * @return string
      */
     protected function _getElementHtml(\Magento\Framework\Data\Form\Element\AbstractElement $element)
     {
@@ -64,7 +68,7 @@ class Generate extends \Magento\Config\Block\System\Config\Form\Field
                                         format: 'json'
                                     },
                                     dataType:'json',
-                                    success : function() {              
+                                    success : function() {
                                         alert('All Barcodes are Generated');
                                     },
                                     error : function(request,error)

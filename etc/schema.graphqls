@@ -1,0 +1,43 @@
+type StoreConfig {
+    barcode: BarcodeConfiguration @resolver(class: "\\Lof\\BarcodeInventory\\Model\\Resolver\\BarcodeConfiguration")
+}
+
+type BarcodeConfiguration {
+    enabled: Boolean
+    attribute_barcode: String
+    barcode_label_content: String
+    barcode_label_css: String
+    use_label: Boolean
+    select_label: String
+    display_logo: Boolean
+    logo: String
+    logo_height: String
+    logo_width: String
+}
+
+type Query {
+
+    LofGetProductByBarcode (
+        barcode: String!
+    ) : ProductInterface @resolver( class: "Lof\\BarcodeInventory\\Model\\Resolver\\ProductByBarcode")
+
+    LofGetAllBarcode(
+        pageSize: Int = 20 @doc(description: "Specifies the maximum number of results to return at once. This attribute is optional."),
+        currentPage: Int = 1 @doc(description: "Specifies which page of results to return. The default value is 1."),
+    ) : Barcodes @resolver(class: "\\Lof\\BarcodeInventory\\Model\\Resolver\\Barcodes")
+
+}
+
+type Barcodes {
+    total_page: Int
+    items: [Barcode]
+}
+
+type Barcode {
+    barcode  : String
+    product_id  : String
+    qty : Int
+    warehouse_code : String
+    source_code : String
+}
+
