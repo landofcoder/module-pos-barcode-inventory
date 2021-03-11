@@ -53,10 +53,10 @@ class UpdateQty implements ResolverInterface
         array $value = null,
         array $args = null
     ) {
-//        /** @var ContextInterface $context */
-//        if (!$context->getExtensionAttributes()->getIsCustomer()) {
-//            throw new GraphQlAuthorizationException(__('The current customer isn\'t authorized.'));
-//        }
+        /** @var ContextInterface $context */
+        if (!$context->getUserId()) {
+            throw new GraphQlAuthorizationException(__('The current user isn\'t authorized.'));
+        }
 
         return $this->barcodeManagement->updateQtyByBarcode($args['barcode']);
     }

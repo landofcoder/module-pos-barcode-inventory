@@ -9,8 +9,10 @@ namespace Lof\BarcodeInventory\Model\Resolver;
 
 use Lof\BarcodeInventory\Api\GenerateBarcodeManagementInterface;
 use Magento\Framework\GraphQl\Config\Element\Field;
+use Magento\Framework\GraphQl\Exception\GraphQlAuthorizationException;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
+use Magento\GraphQl\Model\Query\ContextInterface;
 
 
 /**
@@ -45,6 +47,10 @@ class Barcodes implements ResolverInterface
         array $value = null,
         array $args = null
     ) {
+        /** @var ContextInterface $context */
+        if (!$context->getUserId()) {
+            throw new GraphQlAuthorizationException(__('The current user isn\'t authorized.'));
+        }
         if ($args['currentPage'] < 1) {
             throw new GraphQlInputException(__('currentPage value must be greater than 0.'));
         }
