@@ -28,6 +28,17 @@ type Query {
 
 }
 
+type Mutation {
+
+    LofAddProductToCartByBarcode(
+        barcode: String!,
+        cartId: Int = 0,
+    ): Res @resolver(class: "\\Lof\\BarcodeInventory\\Model\\Resolver\\AddToCart")
+
+    LofUpdateProductInCartByBarcode(barcode: String!): Res @resolver(class: "\\Lof\\BarcodeInventory\\Model\\Resolver\\UpdateQty")
+
+}
+
 type Barcodes {
     total_page: Int
     items: [Barcode]
@@ -41,3 +52,7 @@ type Barcode {
     source_code : String
 }
 
+type Res {
+    code: String
+    message: String
+}
