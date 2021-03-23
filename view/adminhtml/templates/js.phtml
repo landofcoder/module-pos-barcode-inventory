@@ -26,8 +26,6 @@
                             dataType: 'json',
                             data: {},
                             complete: function(response) {
-                                console.log(response);
-                                console.log(this.url);
                                 var data = response.responseJSON.data1;
                                 var print_window = window.open('', 'print', 'status=1,width=700,height=700');
                                 if (print_window) {
@@ -50,4 +48,5 @@
 
         })
     }
+
 </script>

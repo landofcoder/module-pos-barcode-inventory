@@ -1,8 +1,12 @@
 <?php
 namespace Lof\BarcodeInventory\Controller\PrintBarcode;
 
+use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
+use Magento\Framework\Controller\Result\Raw;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\App\Action\Action;
+use Magento\Framework\File\Csv;
+use Magento\Framework\Filesystem;
 use Magento\Framework\View\Result\PageFactory;
 use Magento\Framework\App\Action\Context;
 use Lof\BarcodeInventory\Helper\Data;
@@ -14,13 +18,17 @@ class PrintFile extends Action
     protected $productCollectionFactory;
     protected $_helper;
     private $mediaDirectory;
+    /**
+     * @var PageFactory
+     */
+    private $pageFactory;
 
     public function __construct(
         Context $context,
         Data $data,
-        \Magento\Framework\File\Csv $csvProcessor,
-        \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $productCollectionFactory,
-        \Magento\Framework\Filesystem $filesystem,
+        Csv $csvProcessor,
+        CollectionFactory $productCollectionFactory,
+        Filesystem $filesystem,
         PageFactory $pageFactory
     ) {
         parent::__construct($context);
@@ -33,7 +41,7 @@ class PrintFile extends Action
 
     public function execute()
     {
-        /** @var \Magento\Framework\Controller\Result\Raw $response */
+        /** @var Raw $response */
         $response = $this->resultFactory->create(ResultFactory::TYPE_RAW);
         $response->setHeader('Content-type', 'text/plain');
         $file = $this->getRequest()->getParam("file");

@@ -38,54 +38,6 @@
                     <field id="barcode/general/enabled">1</field>
                 </depends>
                 <label>Barcode Design</label>
-                <field id="use_label" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
-                    <label>Use Barcode Label</label>
-                    <source_model>Lof\BarcodeInventory\Model\Config\Source\UseLabel</source_model>
-                    <comment><![CDATA[Select <strong>Yes</strong> to use barcode label.]]></comment>
-                </field>
-                <field id="select_label" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Select Barcode Label</label>
-                    <depends>
-                        <field id="use_label">1</field>
-                    </depends>
-                    <source_model>Lof\BarcodeInventory\Model\Config\Source\BarcodeLabels</source_model>
-                </field>
-                <field id="display_logo" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="10" translate="label" type="select">
-                    <label>Display Logo</label>
-                    <comment/>
-                    <depends>
-                        <field id = "use_label">1</field>
-                    </depends>
-                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                </field>
-                <field id="logo" translate="label" type="image" sortOrder="11" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Image Upload</label>
-                    <backend_model>Lof\BarcodeInventory\Model\Config\Backend\Image</backend_model>
-                    <base_url type="media" scope_info="1">lof\barcode_logo</base_url>
-                    <comment><![CDATA[Allowed file types: jpg, jpeg, png]]></comment>
-                    <depends>
-                        <field id = "use_label">1</field>
-                        <field id = "display_logo">1</field>
-                    </depends>
-                </field>
-                <field id="logo_height" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="12" translate="label comment" type="text">
-                    <label>Logo Height</label>
-                    <comment>Recommended height is 50px</comment>
-                    <depends>
-                        <field id = "use_label">1</field>
-                        <field id = "display_logo">1</field>
-                    </depends>
-                    <validate>required-entry</validate>
-                </field>
-                <field id="logo_width" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="14" translate="label comment" type="text">
-                    <label>Logo Width</label>
-                    <comment>Recommended width is 150px</comment>
-                    <depends>
-                        <field id = "use_label">1</field>
-                        <field id = "display_logo">1</field>
-                    </depends>
-                    <validate>required-entry</validate>
-                </field>
                 <field id="barcode_label_content" translate="label" type="textarea" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Barcode Label Content</label>
                     <source_model>Lof\BarcodeInventory\Model\Config\Source\LabelContent</source_model>

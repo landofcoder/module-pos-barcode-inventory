@@ -1,0 +1,8 @@
+<?xml version="1.0" ?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+	<menu>
+		<add id="Lof_Barcode::lof_barcode" module="Lof_BarcodeInventory" resource="Lof_BarcodeInventory::barcode" parent="Lof_All::lof_all"  sortOrder="9999" title="Barcode"/>
+		<add id="Lof_Barcode::lof_barcode_print" module="Lof_BarcodeInventory" resource="Lof_BarcodeInventory::print_barcode" parent="Lof_Barcode::lof_barcode"  sortOrder="10" title="Preview and Print Barcode" action="catalog/product/index"/>
+        <add id="Lof_Barcode::configuration" title="Configuration" module="Lof_BarcodeInventory" sortOrder="1000" parent="Lof_Barcode::lof_barcode" action="adminhtml/system_config/edit/section/barcode" resource="Lof_BarcodeInventory::config_lof_barcodeinventory"/>
+	</menu>
+</config>

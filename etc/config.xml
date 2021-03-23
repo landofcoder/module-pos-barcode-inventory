@@ -11,14 +11,13 @@
 				<base_path>lof/barcode/upload</base_path>
 			</print_setting>
 			<design>
-                <use_label>0</use_label>
-				<barcode_label_css>.barcode_paper{ width: 350px; float: left; margin: 10px;} .barcode_paper .row{ text-align: center; margin: 7px; }</barcode_label_css>
-				<barcode_label_content><![CDATA[<div class="barcode_paper">
-	<div class="row"><b>{{product_name}}</b></div>
-	<div class="row">{{barcode}}</div>
-	<div class="row"><b>{{product_sku}}</b></div>
-	<div class="row"><b>{{product_price}}</b></div>
-	<div class="row"><b>{{barcode_number}}</b></div>
+                <barcode_label_css>.barcode_paper{ width: 350px; float: left; margin: 10px;} .barcode_paper .row{ text-align: center; margin: 7px; }</barcode_label_css>
+				<barcode_label_content><![CDATA[<div class='barcode_paper'>
+	<div class='row'><b>{{product_name}}</b></div>
+	<div class='row'>{{barcode}}</div>
+	<div class='row'><b>{{product_sku}}</b></div>
+	<div class='row'><b>{{product_price}}</b></div>
+	<div class='row'><b>{{barcode_number}}</b></div>
 </div>]]></barcode_label_content>
 			</design>
 		</barcode>

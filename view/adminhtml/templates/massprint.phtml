@@ -1,17 +1,21 @@
 <?php
-$blockObj= $block->getLayout()->createBlock('Lof\BarcodeInventory\Block\Adminhtml\Barcode\MassPrint');
+use Lof\BarcodeInventory\Block\Adminhtml\Barcode\MassPrint;
+/** @var $block MassPrint*/
 
-$collection =  $blockObj->getFoo();
+
+$collection = $block->getCollection();
 /** @var TYPE_NAME $helper */
 $helper = $this->helper('Lof\BarcodeInventory\Helper\Data');
-$helper->generatePaperPrint($collection);
+$css = "<style>".$helper->getCss()."</style>";
+$html = $block->escapeJs($helper->generatePaperPrint($collection).$css);
+$url = $block->getUrl('catalog/product');
 ?>
-    <style type="text/css">
-        <?php
-            echo $helper->getCss();
-        ?>
-    </style>
-    <script>
-        window.print();
-    </script>
-<?php die;
+<script>
+    var print_window = window.open('', 'print', 'status=1,width=700,height=700');
+    print_window.document.open();
+    print_window.document.write("<?=$html?>");
+    print_window.document.close();
+    print_window.print();
+    window.location.href = "<?=$url?>";
+</script>
+<?php
