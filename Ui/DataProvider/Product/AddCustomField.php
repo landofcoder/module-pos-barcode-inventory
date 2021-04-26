@@ -1,4 +1,5 @@
 <?php
+
 namespace Lof\BarcodeInventory\Ui\DataProvider\Product;
 
 class AddCustomField implements \Magento\Ui\DataProvider\AddFieldToCollectionInterface

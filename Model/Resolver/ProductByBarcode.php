@@ -14,14 +14,8 @@ use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\GraphQl\Model\Query\ContextInterface;
 
-
-/**
- * Class ProductByBarcode
- * @package Lof\BarcodeInventory\Model\Resolver
- */
 class ProductByBarcode implements ResolverInterface
 {
-
     /**
      * @var GenerateBarcodeManagementInterface
      */
@@ -38,7 +32,13 @@ class ProductByBarcode implements ResolverInterface
     }
 
     /**
-     * @inheritdoc
+     * @param Field $field
+     * @param \Magento\Framework\GraphQl\Query\Resolver\ContextInterface $context
+     * @param ResolveInfo $info
+     * @param array|null $value
+     * @param array|null $args
+     * @return \Magento\Framework\GraphQl\Query\Resolver\Value|mixed
+     * @throws GraphQlAuthorizationException
      */
     public function resolve(
         Field $field,
@@ -54,4 +54,3 @@ class ProductByBarcode implements ResolverInterface
         return $this->barcodeManagement->getProductInfo($args['barcode']);
     }
 }
-

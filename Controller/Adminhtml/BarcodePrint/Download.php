@@ -2,28 +2,28 @@
 
 namespace Lof\BarcodeInventory\Controller\Adminhtml\BarcodePrint;
 
-/**
- * Class Download
- * @package Lof\BarcodeInventory\Controller\Adminhtml\BarcodePrint
- */
 class Download extends \Magento\Framework\App\Action\Action
 {
     /**
      * @var \Magento\Framework\App\Response\Http\FileFactory
      */
     protected $fileFactory;
+
     /**
      * @var \Magento\Framework\File\Csv
      */
     protected $csvProcessor;
+
     /**
      * @var \Magento\Framework\App\Filesystem\DirectoryList
      */
     protected $directoryList;
+
     /**
      * @var \Magento\Framework\View\Result\PageFactory
      */
     protected $resultPageFactory;
+
     /**
      * @var \Magento\Framework\App\ResourceConnection
      */

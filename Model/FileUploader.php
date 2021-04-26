@@ -4,15 +4,55 @@ namespace Lof\BarcodeInventory\Model;
 
 class FileUploader
 {
+    /**
+     * @var \Magento\MediaStorage\Helper\File\Storage\Database
+     */
     private $coreFileStorageDatabase;
+
+    /**
+     * @var \Magento\Framework\Filesystem\Directory\WriteInterface
+     */
     private $mediaDirectory;
+
+    /**
+     * @var \Magento\MediaStorage\Model\File\UploaderFactory
+     */
     private $uploaderFactory;
+
+    /**
+     * @var \Magento\Store\Model\StoreManagerInterface
+     */
     private $storeManager;
+
+    /**
+     * @var \Psr\Log\LoggerInterface
+     */
     private $logger;
+
+    /**
+     * @var string
+     */
     public $baseTmpPath;
+
+    /**
+     * @var string
+     */
     public $basePath;
+
+    /**
+     * @var string[]
+     */
     public $allowedExtensions;
 
+    /**
+     * FileUploader constructor.
+     * @param \Magento\MediaStorage\Helper\File\Storage\Database $coreFileStorageDatabase
+     * @param \Magento\Framework\Filesystem $filesystem
+     * @param \Magento\MediaStorage\Model\File\UploaderFactory $uploaderFactory
+     * @param \Magento\Store\Model\StoreManagerInterface $storeManager
+     * @param \Psr\Log\LoggerInterface $logger
+     * @throws \Magento\Framework\Exception\FileSystemException
+     */
     public function __construct(
         \Magento\MediaStorage\Helper\File\Storage\Database $coreFileStorageDatabase,
         \Magento\Framework\Filesystem $filesystem,
@@ -27,9 +67,13 @@ class FileUploader
         $this->logger = $logger;
         $this->baseTmpPath = "lof/barcode/upload/tmp";
         $this->basePath = "lof/barcode/upload";
-        $this->allowedExtensions= ['csv', 'xls'];
+        $this->allowedExtensions = ['csv', 'xls'];
     }
 
+    /**
+     * @param $baseTmpPath
+     * @return $this
+     */
     public function setBaseTmpPath($baseTmpPath)
     {
         if ($baseTmpPath) {
@@ -38,6 +82,10 @@ class FileUploader
         return $this;
     }
 
+    /**
+     * @param $basePath
+     * @return $this
+     */
     public function setBasePath($basePath)
     {
         if ($basePath) {
@@ -46,31 +94,53 @@ class FileUploader
         return $this;
     }
 
+    /**
+     * @param $allowedExtensions
+     */
     public function setAllowedExtensions($allowedExtensions)
     {
         $this->allowedExtensions = $allowedExtensions;
     }
 
+    /**
+     * @return string
+     */
     public function getBaseTmpPath()
     {
         return $this->baseTmpPath;
     }
 
+    /**
+     * @return string
+     */
     public function getBasePath()
     {
         return $this->basePath;
     }
 
+    /**
+     * @return string[]
+     */
     public function getAllowedExtensions()
     {
         return $this->allowedExtensions;
     }
 
+    /**
+     * @param $path
+     * @param $imageName
+     * @return string
+     */
     public function getFilePath($path, $imageName)
     {
         return rtrim($path, '/') . '/' . ltrim($imageName, '/');
     }
 
+    /**
+     * @param $imageName
+     * @return mixed
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
     public function moveFileFromTmp($imageName)
     {
         $baseTmpPath = $this->getBaseTmpPath();
@@ -94,6 +164,12 @@ class FileUploader
         return $imageName;
     }
 
+    /**
+     * @param $fileId
+     * @return array|bool
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
     public function saveFileToTmpDir($fileId)
     {
         $baseTmpPath = $this->getBaseTmpPath();

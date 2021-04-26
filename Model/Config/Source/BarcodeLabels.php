@@ -25,26 +25,29 @@ namespace Lof\BarcodeInventory\Model\Config\Source;
 
 use Magento\Framework\App\Action\Context;
 
-/**
- * Class Sender
- *
- * @package Lof\SendGrid\Model\Config\Source
- */
 class BarcodeLabels implements \Magento\Framework\Option\ArrayInterface
 {
     /**
      * @var Context
      */
     private $context;
+
     /**
      * @var \Magento\Framework\Module\Manager
      */
     private $_moduleManager;
+
     /**
      * @var \Magento\Framework\ObjectManagerInterface
      */
     private $_objectManager;
 
+    /**
+     * BarcodeLabels constructor.
+     * @param Context $context
+     * @param \Magento\Framework\Module\Manager $moduleManager
+     * @param \Magento\Framework\ObjectManagerInterface $objectmanager
+     */
     public function __construct(
         Context $context,
         \Magento\Framework\Module\Manager $moduleManager,
@@ -54,11 +57,18 @@ class BarcodeLabels implements \Magento\Framework\Option\ArrayInterface
         $this->_moduleManager = $moduleManager;
         $this->_objectManager = $objectmanager;
     }
+
+    /**
+     * @return array
+     */
     public function toOptionArray()
     {
         $options = [];
         if ($this->_moduleManager->isEnabled('Lof_BarcodeLabel')) {
-            $list = $this->_objectManager->create("Lof\BarcodeLabel\Model\ResourceModel\Label\Collection")->addFieldToFilter('status', 'active');
+            $list = $this->_objectManager->create("Lof\BarcodeLabel\Model\ResourceModel\Label\Collection")->addFieldToFilter(
+                'status',
+                'active'
+            );
             foreach ($list as $item) {
                 $options[] = [
                     'label' => __($item->getTemplateName()),

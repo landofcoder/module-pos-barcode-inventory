@@ -2,8 +2,6 @@
 namespace Lof\BarcodeInventory\Block\Adminhtml\System\Config;
 
 use Magento\Config\Block\System\Config\Form\Field;
-use Magento\Backend\Block\Template\Context;
-use Magento\Framework\Data\Form\Element\AbstractElement;
 
 class Load extends Field
 {
@@ -20,6 +18,7 @@ class Load extends Field
         $this->_backendUrl = $backendUrl;
         parent::__construct($context, $data);
     }
+
     /**
      * Add color picker
      *
@@ -46,7 +45,7 @@ class Load extends Field
             function($) {
                 $('#load').on('click', function(){
                     alert('Barcode Generated');
-                    
+
                 });
             });</script>";
         return $html;

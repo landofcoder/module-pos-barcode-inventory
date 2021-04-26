@@ -1,4 +1,5 @@
 <?php
+
 namespace Lof\BarcodeInventory\Setup;
 
 use Magento\Framework\Setup\InstallSchemaInterface;
@@ -8,6 +9,11 @@ use Magento\Framework\DB\Ddl\Table;
 
 class InstallSchema implements InstallSchemaInterface
 {
+    /**
+     * @param SchemaSetupInterface $setup
+     * @param ModuleContextInterface $context
+     * @throws \Zend_Db_Exception
+     */
     public function install(SchemaSetupInterface $setup, ModuleContextInterface $context)
     {
         $setup->startSetup();
@@ -19,19 +25,19 @@ class InstallSchema implements InstallSchemaInterface
                     'id',
                     Table::TYPE_INTEGER,
                     null,
-                    ['identity'=>true,'unsigned'=>true,'nullable'=>false,'primary'=>true]
+                    ['identity' => true, 'unsigned' => true, 'nullable' => false, 'primary' => true]
                 )
                 ->addColumn(
                     'sku',
                     Table::TYPE_TEXT,
                     255,
-                    ['nullable'=>false,'default'=>'']
+                    ['nullable' => false, 'default' => '']
                 )
                 ->addColumn(
                     'qty',
                     Table::TYPE_INTEGER,
                     '2M',
-                    ['nullable'=>false]
+                    ['nullable' => false]
                 )
                 ->setOption('charset', 'utf8');
             $conn->createTable($table);

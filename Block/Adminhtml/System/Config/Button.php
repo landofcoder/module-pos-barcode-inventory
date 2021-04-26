@@ -6,10 +6,6 @@ use Magento\Config\Block\System\Config\Form\Field;
 use Magento\Backend\Block\Template\Context;
 use Magento\Framework\Data\Form\Element\AbstractElement;
 
-/**
- * Class Button
- * @package Lof\BarcodeInventory\Block\Adminhtml\System\Config
- */
 class Button extends Field
 {
     /**

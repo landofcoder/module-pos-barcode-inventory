@@ -5,10 +5,6 @@ namespace Lof\BarcodeInventory\Block\Adminhtml\Barcode;
 use Magento\Backend\Block\Template\Context;
 use Magento\Framework\Registry;
 
-/**
- * Class MassPrint
- * @package Lof\BarcodeInventory\Block\Adminhtml\Barcode
- */
 class MassPrint extends \Magento\Backend\Block\Template
 {
     /**
@@ -39,5 +35,4 @@ class MassPrint extends \Magento\Backend\Block\Template
     {
         return $this->_coreRegistry->registry('collection');
     }
-
 }

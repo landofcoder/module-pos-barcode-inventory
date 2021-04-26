@@ -21,18 +21,16 @@
 
 namespace Lof\BarcodeInventory\Model\Config\Source;
 
-/**
- * Customer group attribute source
- *
- * @author      Magento Core Team <core@magentocommerce.com>
- */
 class BarcodeAttribute implements \Magento\Framework\Option\ArrayInterface
 {
+    /**
+     * @return array
+     */
     public function toOptionArray()
     {
         $option = ['sku' =>  __("Product SKU"),
                     'product_code' =>  __("Product Code")];
-        $options = array();
+        $options = [];
         foreach ($option as $key => $val) {
             $options[] = ['value'=>$key,'label'=>$val];
         }

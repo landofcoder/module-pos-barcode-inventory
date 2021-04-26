@@ -14,14 +14,8 @@ use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\GraphQl\Model\Query\ContextInterface;
 
-
-/**
- * Class Barcodes
- * @package Lof\BarcodeInventory\Model\Resolver
- */
 class Barcodes implements ResolverInterface
 {
-
     /**
      * @var GenerateBarcodeManagementInterface
      */
@@ -60,4 +54,3 @@ class Barcodes implements ResolverInterface
         return $this->barcodeManagement->getAllBarcode($args['pageSize'], $args['currentPage']);
     }
 }
-

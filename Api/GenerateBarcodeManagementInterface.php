@@ -9,12 +9,14 @@ interface GenerateBarcodeManagementInterface
      * @return string
      */
     public function getGenerateBarcode();
+
     /**
      * GET product info by barcode
      * @param string $barcode
      * @return mixed
      */
     public function getProductInfo($barcode);
+
     /**
      * GET all barcode with product_id, qty
      * @param integer $pageSize
@@ -22,6 +24,7 @@ interface GenerateBarcodeManagementInterface
      * @return mixed
      */
     public function getAllBarcode($pageSize, $pageNumber);
+
     /**
      * GET all barcode with product_id, qty
      * @param string $barcode
@@ -29,6 +32,7 @@ interface GenerateBarcodeManagementInterface
      * @return mixed
      */
     public function addProductToCartByBarcode($barcode, $cartId);
+
     /**
      * GET all barcode with product_id, qty
      * @param string $barcode

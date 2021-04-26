@@ -1,4 +1,5 @@
 <?php
+
 namespace Lof\BarcodeInventory\Ui\Component\Listing\Columns;
 
 use Lof\BarcodeInventory\Helper\Data;
@@ -9,25 +10,23 @@ use Magento\Framework\View\Element\UiComponent\ContextInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Ui\Component\Listing\Columns\Column;
 
-/**
- * Class Barcode
- * @package Lof\BarcodeInventory\Ui\Component\Listing\Columns
- */
 class Barcode extends Column
 {
-
     /**
      * @var StoreManagerInterface
      */
     protected $storeManager;
+
     /**
      * @var Image
      */
     private $imageHelper;
+
     /**
      * @var UrlInterface
      */
     private $urlBuilder;
+
     /**
      * @var Data
      */

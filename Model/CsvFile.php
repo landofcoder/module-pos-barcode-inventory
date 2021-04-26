@@ -10,11 +10,20 @@ class CsvFile
      */
     protected $csvProcessor;
 
+    /**
+     * CsvFile constructor.
+     * @param \Magento\Framework\File\Csv $csvProcessor
+     */
     public function __construct(
         \Magento\Framework\File\Csv $csvProcessor
     ) {
         $this->csvProcessor = $csvProcessor;
     }
+
+    /**
+     * @param $file
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
     public function importFromCsvFile($file)
     {
         if (!isset($file['tmp_name'])) {
@@ -22,9 +31,10 @@ class CsvFile
         }
         $importProductRawData = $this->csvProcessor->getData($file['tmp_name']);
 
-        foreach ($importProductRawData as $rowIndex => $dataRow) {
+        foreach ($importProductRawData as $dataRow) {
             \Zend_Debug::dump($dataRow);
         }
+
         die();
     }
 }

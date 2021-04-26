@@ -25,26 +25,29 @@ namespace Lof\BarcodeInventory\Model\Config\Source;
 
 use Magento\Framework\App\Action\Context;
 
-/**
- * Class Sender
- *
- * @package Lof\SendGrid\Model\Config\Source
- */
 class UseLabel implements \Magento\Framework\Option\ArrayInterface
 {
     /**
      * @var Context
      */
     private $context;
+
     /**
      * @var \Magento\Framework\Module\Manager
      */
     private $_moduleManager;
+
     /**
      * @var \Magento\Framework\ObjectManagerInterface
      */
     private $_objectManager;
 
+    /**
+     * UseLabel constructor.
+     * @param Context $context
+     * @param \Magento\Framework\Module\Manager $moduleManager
+     * @param \Magento\Framework\ObjectManagerInterface $objectmanager
+     */
     public function __construct(
         Context $context,
         \Magento\Framework\Module\Manager $moduleManager,
@@ -54,15 +57,21 @@ class UseLabel implements \Magento\Framework\Option\ArrayInterface
         $this->_moduleManager = $moduleManager;
         $this->_objectManager = $objectmanager;
     }
+
+    /**
+     * @return array
+     */
     public function toOptionArray()
     {
         $options = [];
         if ($this->_moduleManager->isEnabled('Lof_BarcodeLabel')) {
-            $option = ['1' =>  __("Yes"),
-                '0' =>  __("No")];
-            $options = array();
+            $option = [
+                '1' => __("Yes"),
+                '0' => __("No")
+            ];
+            $options = [];
             foreach ($option as $key => $val) {
-                $options[] = ['value'=>$key,'label'=>$val];
+                $options[] = ['value' => $key, 'label' => $val];
             }
         } else {
             $options[] = [

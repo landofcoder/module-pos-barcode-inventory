@@ -6,25 +6,18 @@ namespace Lof\BarcodeInventory\Model\Resolver;
 use Lof\BarcodeInventory\Api\GenerateBarcodeManagementInterface;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Exception\GraphQlAuthorizationException;
-use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\GraphQl\Model\Query\ContextInterface;
 use Magento\CustomerGraphQl\Model\Customer\GetCustomer;
 
-
-/**
- * Class AddToCart
- * @package Lof\BarcodeInventory\Model\Resolver
- */
 class AddToCart implements ResolverInterface
 {
-
-
     /**
      * @var GetCustomer
      */
     private $getCustomer;
+
     /**
      * @var GenerateBarcodeManagementInterface
      */
@@ -44,7 +37,13 @@ class AddToCart implements ResolverInterface
     }
 
     /**
-     * @inheritdoc
+     * @param Field $field
+     * @param \Magento\Framework\GraphQl\Query\Resolver\ContextInterface $context
+     * @param ResolveInfo $info
+     * @param array|null $value
+     * @param array|null $args
+     * @return \Magento\Framework\GraphQl\Query\Resolver\Value|mixed
+     * @throws GraphQlAuthorizationException
      */
     public function resolve(
         Field $field,
@@ -57,7 +56,7 @@ class AddToCart implements ResolverInterface
         if (!$context->getUserId()) {
             throw new GraphQlAuthorizationException(__('The current user isn\'t authorized.'));
         }
-        if (!isset($args['cartId'])){
+        if (!isset($args['cartId'])) {
             $args['cartId'] = 0;
         }
         return $this->barcodeManagement->addProductToCartByBarcode($args['barcode'], $args['cartId']);

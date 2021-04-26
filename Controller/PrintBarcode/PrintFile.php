@@ -13,16 +13,46 @@ use Lof\BarcodeInventory\Helper\Data;
 
 class PrintFile extends Action
 {
+    /**
+     * @var
+     */
     public $imageUploader;
+
+    /**
+     * @var Csv
+     */
     protected $csvProcessor;
+
+    /**
+     * @var CollectionFactory
+     */
     protected $productCollectionFactory;
+
+    /**
+     * @var Data
+     */
     protected $_helper;
+
+    /**
+     * @var Filesystem\Directory\WriteInterface
+     */
     private $mediaDirectory;
+
     /**
      * @var PageFactory
      */
     private $pageFactory;
 
+    /**
+     * PrintFile constructor.
+     * @param Context $context
+     * @param Data $data
+     * @param Csv $csvProcessor
+     * @param CollectionFactory $productCollectionFactory
+     * @param Filesystem $filesystem
+     * @param PageFactory $pageFactory
+     * @throws \Magento\Framework\Exception\FileSystemException
+     */
     public function __construct(
         Context $context,
         Data $data,
@@ -39,6 +69,10 @@ class PrintFile extends Action
         $this->pageFactory = $pageFactory;
     }
 
+    /**
+     * @return \Magento\Framework\App\ResponseInterface|Raw|\Magento\Framework\Controller\ResultInterface
+     * @throws \Exception
+     */
     public function execute()
     {
         /** @var Raw $response */

@@ -26,9 +26,6 @@ use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\UrlInterface;
 
-/**
- * Lof BarcodeInventory ProductSaveBefore Observer.
- */
 class ProductSaveBefore implements ObserverInterface
 {
     /**
@@ -41,6 +38,9 @@ class ProductSaveBefore implements ObserverInterface
      */
     protected $product;
 
+    /**
+     * @var UrlInterface
+     */
     protected $url;
 
     /**

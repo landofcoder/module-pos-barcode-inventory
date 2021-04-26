@@ -15,9 +15,6 @@ use Magento\Framework\View\Result\Page;
 use Magento\Framework\View\Result\PageFactory;
 use Magento\Ui\Component\MassAction\Filter;
 
-/**
- * Class MassDelete
- */
 class MassPrint extends \Magento\Backend\App\Action implements HttpPostActionInterface
 {
 
@@ -30,27 +27,31 @@ class MassPrint extends \Magento\Backend\App\Action implements HttpPostActionInt
      * @var
      */
     protected $_helper;
+
     /**
      * @var CollectionFactory
      */
     protected $collectionFactory;
+
     /**
      * @var Registry
      */
     protected $_coreRegistry;
+
     /**
      * @var PageFactory
      */
     protected $_pageFactory;
+
     /**
      * @var ResponseFactory
      */
     protected $_responseFactory;
+
     /**
      * @var Data
      */
     private $helper;
-
 
     /**
      * MassPrint constructor.

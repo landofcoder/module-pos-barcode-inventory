@@ -3,14 +3,12 @@
 namespace Lof\BarcodeInventory\Helper;
 
 use Magento\Catalog\Model\ProductFactory;
-use Magento\Directory\Model\CurrencyFactory;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\App\Response\Http\FileFactory;
 use Magento\Framework\Exception\FileSystemException;
-use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\File\UploaderFactory;
 use Magento\Framework\Filesystem;
 use Magento\Framework\Filesystem\Io\File;
@@ -19,69 +17,68 @@ use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Picqer\Barcode\BarcodeGeneratorPNG;
 
-/**
- * Class Data
- * @package Lof\BarcodeInventory\Helper
- */
 class Data extends AbstractHelper
 {
+    const BARCODE = 'barcode/';
+    const BARCODELABEL = 'barcode_label/';
+
     /**
      * @var File
      */
     private $file;
+
     /**
      * @var Filesystem\DirectoryList
      */
     private $dir;
+
     /**
      * @var Filesystem\Directory\WriteInterface
      */
     private $mediaDirectory;
+
     /**
      * @var FileFactory
      */
     protected $fileFactory;
+
     /**
      * @var UploaderFactory $fileUploader
      */
     protected $fileUploader;
+
     /**
      * @var Filesystem $filesystem
      */
     protected $filesystem;
-    /**
-     *
-     */
-    const BARCODE = 'barcode/';
-    /**
-     *
-     */
-    const BARCODELABEL = 'barcode_label/';
+
     /**
      * @var ProductFactory
      */
     protected $product;
+
     /**
      * @var UrlInterface
      */
     private $urlBuilder;
+
     /**
      * @var StoreManagerInterface
      */
     private $storeManager;
+
     /**
      * @var BarcodeGeneratorPNG
      */
     private $barcodeGeneratorPNG;
+
     /**
      * @var \Magento\Framework\Pricing\Helper\Data
      */
     private $priceHelper;
 
-
     /**
      * Data constructor.
-     *
      * @param File $file
      * @param FileFactory $fileFactory
      * @param Filesystem\DirectoryList $dir
@@ -89,7 +86,7 @@ class Data extends AbstractHelper
      * @param Filesystem $filesystem
      * @param UrlInterface $urlBuilder
      * @param ProductFactory $product
-     * @param UploaderFactory $fileUploader $fileFactory
+     * @param UploaderFactory $fileUploader
      * @param StoreManagerInterface $storeManager
      * @param BarcodeGeneratorPNG $barcodeGeneratorPNG
      * @param \Magento\Framework\Pricing\Helper\Data $priceHelper
@@ -119,7 +116,7 @@ class Data extends AbstractHelper
         $this->product = $product;
         $this->storeManager = $storeManager;
         $this->barcodeGeneratorPNG = $barcodeGeneratorPNG;
-        $this->priceHelper  = $priceHelper;
+        $this->priceHelper = $priceHelper;
     }
 
     /**
@@ -270,7 +267,8 @@ class Data extends AbstractHelper
      * @param $code
      * @return string
      */
-    public function getBase64Barcode($code){
+    public function getBase64Barcode($code)
+    {
         return base64_encode($this->barcodeGeneratorPNG->getBarcode($code, $this->barcodeGeneratorPNG::TYPE_CODE_128));
     }
 
@@ -278,15 +276,17 @@ class Data extends AbstractHelper
      * @param $price
      * @return float|string
      */
-    public function formatPrice($price){
-        return $this->priceHelper->currency($price,true,false);
+    public function formatPrice($price)
+    {
+        return $this->priceHelper->currency($price, true, false);
     }
 
     /**
      * @param $product
      * @return string|string[]
      */
-    public function generateLabel($product){
+    public function generateLabel($product)
+    {
         if ($this->getGeneralConfig('attribute_barcode') == 'sku') {
             $code = $product->getSku();
         } else {

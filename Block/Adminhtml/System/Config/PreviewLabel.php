@@ -1,10 +1,8 @@
 <?php
 namespace Lof\BarcodeInventory\Block\Adminhtml\System\Config;
- 
+
 use Magento\Config\Block\System\Config\Form\Field;
-use Magento\Backend\Block\Template\Context;
-use Magento\Framework\Data\Form\Element\AbstractElement;
- 
+
 class PreviewLabel extends Field
 {
     /**
@@ -15,11 +13,12 @@ class PreviewLabel extends Field
     public function __construct(
         \Magento\Backend\Model\UrlInterface $backendUrl,
         \Magento\Backend\Block\Template\Context $context,
-        array $data = [])
-    {
+        array $data = []
+    ) {
         $this->_backendUrl = $backendUrl;
         parent::__construct($context, $data);
     }
+
     /**
      * Add color picker
      *
@@ -46,7 +45,7 @@ class PreviewLabel extends Field
             function($) {
                 $('#previewlb').on('click', function(){
                     alert('Barcode Generated');
-                    
+
                 });
             });</script>";
         return $html;

@@ -6,7 +6,6 @@ use Magento\Framework\UrlInterface;
 
 class PrintPaper extends Template
 {
-
     /**
      * Constructor
      *
@@ -21,16 +20,29 @@ class PrintPaper extends Template
         parent::__construct($context, $data);
         $this->urlBuilder = $urlBuilder;
     }
+
+    /**
+     * @param $asset
+     * @return mixed
+     */
     public function getAssetUrl($asset)
     {
         $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
         $assetRepository = $objectManager->get('Magento\Framework\View\Asset\Repository');
         return $assetRepository->createAsset($asset)->getUrl();
     }
+
+    /**
+     * @return string
+     */
     public function getDomain()
     {
         return $this->urlBuilder->getBaseUrl();
     }
+
+    /**
+     * @return mixed
+     */
     public function getFoo()
     {
         return $this->_coreRegistry->registry('foo');

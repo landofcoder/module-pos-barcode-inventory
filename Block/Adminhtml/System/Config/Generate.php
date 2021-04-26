@@ -4,10 +4,6 @@ namespace Lof\BarcodeInventory\Block\Adminhtml\System\Config;
 use Magento\Backend\Block\Template\Context;
 use Magento\Backend\Model\UrlInterface;
 
-/**
- * Class GenerateBarcode
- * @package Lof\BarcodeInventory\Block\Adminhtml\System\Config
- */
 class Generate extends \Magento\Config\Block\System\Config\Form\Field
 {
     /**
@@ -23,8 +19,8 @@ class Generate extends \Magento\Config\Block\System\Config\Form\Field
     public function __construct(
         UrlInterface $backendUrl,
         Context $context,
-        array $data = [])
-    {
+        array $data = []
+    ) {
         $this->_backendUrl = $backendUrl;
         parent::__construct($context, $data);
     }

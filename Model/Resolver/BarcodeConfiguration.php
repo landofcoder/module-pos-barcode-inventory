@@ -11,14 +11,8 @@ use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Lof\BarcodeInventory\Helper\Data as BarcodeHelper;
 use Magento\GraphQl\Model\Query\ContextInterface;
 
-
-/**
- * Class BarcodeConfiguration
- * @package Lof\BarcodeInventory\Model\Resolver
- */
 class BarcodeConfiguration implements ResolverInterface
 {
-
     /**
      * @var BarcodeHelper
      */
