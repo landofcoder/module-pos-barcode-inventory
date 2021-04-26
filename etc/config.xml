@@ -23,7 +23,7 @@
 	<default>
 		<barcode>
 			<general>
-				<enabled>yes</enabled>
+				<enabled>1</enabled>
 				<attribute_barcode>product_code</attribute_barcode>
 			</general>
 			<print_setting>
@@ -42,5 +42,4 @@
 			</design>
 		</barcode>
 	</default>
-
 </config>
