@@ -6,7 +6,7 @@
  *
  * This source file is subject to the Landofcoder.com license that is
  * available through the world-wide-web at this URL:
- * https://landofcoder.com/license
+ * https://landofcoder.com/terms
  *
  * DISCLAIMER
  *
@@ -14,25 +14,23 @@
  * version in the future.
  *
  * @category   Landofcoder
- * @package    Lof_QtyDropdown
- * @copyright  Copyright (c) 2020 Landofcoder (https://www.landofcoder.com/)
- * @license    https://www.landofcoder.com/LICENSE-1.0.html
+ * @package    Lof_BarcodeInventory
+ * @copyright  Copyright (c) 2021 Landofcoder (https://www.landofcoder.com/)
+ * @license    https://landofcoder.com/terms
  */
 
 namespace Lof\BarcodeInventory\Model\Config\Source;
 
-/**
- * Customer group attribute source
- *
- * @author      Magento Core Team <core@magentocommerce.com>
- */
 class BarcodeAttribute implements \Magento\Framework\Option\ArrayInterface
 {
+    /**
+     * @return array
+     */
     public function toOptionArray()
     {
         $option = ['sku' =>  __("Product SKU"),
                     'product_code' =>  __("Product Code")];
-        $options = array();
+        $options = [];
         foreach ($option as $key => $val) {
             $options[] = ['value'=>$key,'label'=>$val];
         }

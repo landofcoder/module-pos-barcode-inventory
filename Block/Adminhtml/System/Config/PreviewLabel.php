@@ -1,10 +1,28 @@
 <?php
+/**
+ * Landofcoder
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Landofcoder.com license that is
+ * available through the world-wide-web at this URL:
+ * https://landofcoder.com/terms
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category   Landofcoder
+ * @package    Lof_BarcodeInventory
+ * @copyright  Copyright (c) 2021 Landofcoder (https://www.landofcoder.com/)
+ * @license    https://landofcoder.com/terms
+ */
+
 namespace Lof\BarcodeInventory\Block\Adminhtml\System\Config;
- 
+
 use Magento\Config\Block\System\Config\Form\Field;
-use Magento\Backend\Block\Template\Context;
-use Magento\Framework\Data\Form\Element\AbstractElement;
- 
+
 class PreviewLabel extends Field
 {
     /**
@@ -15,11 +33,12 @@ class PreviewLabel extends Field
     public function __construct(
         \Magento\Backend\Model\UrlInterface $backendUrl,
         \Magento\Backend\Block\Template\Context $context,
-        array $data = [])
-    {
+        array $data = []
+    ) {
         $this->_backendUrl = $backendUrl;
         parent::__construct($context, $data);
     }
+
     /**
      * Add color picker
      *
@@ -46,7 +65,7 @@ class PreviewLabel extends Field
             function($) {
                 $('#previewlb').on('click', function(){
                     alert('Barcode Generated');
-                    
+
                 });
             });</script>";
         return $html;

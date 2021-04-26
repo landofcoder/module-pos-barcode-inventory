@@ -1,4 +1,23 @@
 <?php
+/**
+ * Landofcoder
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Landofcoder.com license that is
+ * available through the world-wide-web at this URL:
+ * https://landofcoder.com/terms
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category   Landofcoder
+ * @package    Lof_BarcodeInventory
+ * @copyright  Copyright (c) 2021 Landofcoder (https://www.landofcoder.com/)
+ * @license    https://landofcoder.com/terms
+ */
 
 namespace Lof\BarcodeInventory\Model;
 
@@ -17,16 +36,13 @@ use Magento\Quote\Model\QuoteFactory;
 use Picqer\Barcode\BarcodeGeneratorPNG;
 use Psr\Log\LoggerInterface;
 
-/**
- * Class GenerateBarcodeManagement
- * @package Lof\BarcodeInventory\Model
- */
 class GenerateBarcodeManagement implements \Lof\BarcodeInventory\Api\GenerateBarcodeManagementInterface
 {
     /**
      * @var Data
      */
     protected $helper;
+
     /**
      * @var ObjectManagerInterface
      */
@@ -36,38 +52,47 @@ class GenerateBarcodeManagement implements \Lof\BarcodeInventory\Api\GenerateBar
      * @var BarcodeGeneratorPNG
      */
     private $generator;
+
     /**
-     * @var Magento\Catalog\Model\Product
+     * @var ProductFactory
      */
     private $product;
+
     /**
      * @var Manager
      */
     private $_moduleManager;
+
     /**
      * @var CollectionFactory
      */
     private $productCollectionFactory;
+
     /**
      * @var FormKey
      */
     private $formKey;
+
     /**
      * @var Cart
      */
     private $cart;
+
     /**
      * @var QuoteFactory
      */
     private $quoteFactory;
+
     /**
      * @var StockRegistryInterface
      */
     private $stockRegistry;
+
     /**
      * @var mixed|LoggerInterface|null
      */
     private $logger;
+
     /**
      * @var ProductRepositoryInterface
      */
@@ -115,6 +140,7 @@ class GenerateBarcodeManagement implements \Lof\BarcodeInventory\Api\GenerateBar
         $this->productRepository = $productRepository;
         $this->logger = $logger ?: \Magento\Framework\App\ObjectManager::getInstance()->get(LoggerInterface::class);
     }
+
     /**
      * {@inheritdoc}
      */
@@ -127,7 +153,7 @@ class GenerateBarcodeManagement implements \Lof\BarcodeInventory\Api\GenerateBar
 
     /**
      * @param string $barcode
-     * @return array|mixed|string
+     * @return array|mixed|null
      * @throws NoSuchEntityException
      */
     public function getProductInfo($barcode)
@@ -176,10 +202,16 @@ class GenerateBarcodeManagement implements \Lof\BarcodeInventory\Api\GenerateBar
             foreach ($multiQtyCollection as $item) {
                 $barcode = $item->getBarcode();
                 $productId = $item->getProductId();
-                $qty =  $item->getQty();
-                $whCode =  $item->getWarehouseCode();
-                $source =  $item->getSource();
-                $obj = ["barcode"=>$barcode, "product_id"=>$productId, "qty"=>$qty, "warehouse_code"=> $whCode, "source_code"=> $source];
+                $qty = $item->getQty();
+                $whCode = $item->getWarehouseCode();
+                $source = $item->getSource();
+                $obj = [
+                    "barcode" => $barcode,
+                    "product_id" => $productId,
+                    "qty" => $qty,
+                    "warehouse_code" => $whCode,
+                    "source_code" => $source
+                ];
                 $list[$key] = $obj;
                 $key++;
             }
@@ -194,7 +226,13 @@ class GenerateBarcodeManagement implements \Lof\BarcodeInventory\Api\GenerateBar
             if ($barcode) {
                 $productId = $product->getId();
                 $qty = "1";
-                $obj = ["barcode"=>$barcode, "product_id"=>$productId, "qty"=>$qty, "warehouse_code"=> null, "source_code"=> null];
+                $obj = [
+                    "barcode" => $barcode,
+                    "product_id" => $productId,
+                    "qty" => $qty,
+                    "warehouse_code" => null,
+                    "source_code" => null
+                ];
                 $list[$key] = $obj;
                 $key++;
             }
@@ -216,10 +254,10 @@ class GenerateBarcodeManagement implements \Lof\BarcodeInventory\Api\GenerateBar
         $product = $this->getProductInfo($barcode);
 
         if (isset($product) && $product) {
-            $params = array(
+            $params = [
                 'product' => $product['entity_id'],
-                'items_qty'   => $product['qty']
-            );
+                'items_qty' => $product['qty']
+            ];
             try {
                 $cart = $this->cart;
                 if ($cartId) {
@@ -230,9 +268,10 @@ class GenerateBarcodeManagement implements \Lof\BarcodeInventory\Api\GenerateBar
             } catch (LocalizedException $e) {
                 $this->logger->critical($e->getMessage());
             }
-            return ['code' => 0, 'message'=> __("Add product to cart successful.")];;
+            return ['code' => 0, 'message' => __("Add product to cart successful.")];
+            ;
         } else {
-            return ['code' => 1, 'message'=> __("Barcode does not exists.")];
+            return ['code' => 1, 'message' => __("Barcode does not exists.")];
         }
     }
 
@@ -244,32 +283,41 @@ class GenerateBarcodeManagement implements \Lof\BarcodeInventory\Api\GenerateBar
     public function updateQtyByBarcode($barcode)
     {
         //cai nay lam sau multi warehouse
-        $productByBarcode = $this->productCollectionFactory->create()->addFieldToFilter('barcode', $barcode)->getFirstItem();
+        $productByBarcode = $this->productCollectionFactory->create()->addFieldToFilter(
+            'barcode',
+            $barcode
+        )->getFirstItem();
         $productBySku = $this->productCollectionFactory->create()->addFieldToFilter('sku', $barcode)->getFirstItem();
         if ($productByBarcode->getData()) {
-            $sku =$productByBarcode->getSku();
+            $sku = $productByBarcode->getSku();
             $stockItem = $this->stockRegistry->getStockItemBySku($sku);
-            $stockItem->setQty($stockItem->getQty()+1);
+            $stockItem->setQty($stockItem->getQty() + 1);
             $stockItem->setIsInStock((bool)1);
             $this->stockRegistry->updateStockItemBySku($sku, $stockItem);
         } elseif ($productBySku->getData()) {
             $sku = $barcode;
             $stockItem = $this->stockRegistry->getStockItemBySku($sku);
-            $stockItem->setQty($stockItem->getQty()+1);
+            $stockItem->setQty($stockItem->getQty() + 1);
             $stockItem->setIsInStock((bool)1);
             $this->stockRegistry->updateStockItemBySku($sku, $stockItem);
         } elseif ($this->_moduleManager->isEnabled('Lof_MultiBarcode')) {
             $object = $this->_objectManager;
-            $multiQtyBarcode = $object->create("Lof\MultiBarcode\Model\ResourceModel\Barcode\Collection")->addFieldToFilter('barcode', $barcode)->getFirstItem();
+            $multiQtyBarcode = $object->create("Lof\MultiBarcode\Model\ResourceModel\Barcode\Collection")->addFieldToFilter(
+                'barcode',
+                $barcode
+            )->getFirstItem();
             if ($multiQtyBarcode->getData()) {
                 $productId = $multiQtyBarcode->getProductId();
                 $product = $this->product->create()->load($productId);
                 $qty = $multiQtyBarcode->getQty();
                 if ($multiQtyBarcode->getSource()) {
                     $sourceItem = $this->_objectManager->create("Magento\Inventory\Model\ResourceModel\SourceItem\Collection")
-                        ->addFieldToFilter('source_code', $multiQtyBarcode->getSource())->addFieldToFilter('sku', $product->getSku())->getFirstItem();
+                        ->addFieldToFilter('source_code', $multiQtyBarcode->getSource())->addFieldToFilter(
+                            'sku',
+                            $product->getSku()
+                        )->getFirstItem();
                     if ($sourceItem->getData()) {
-                        $sourceItem->setQuantity($qty+$sourceItem->getQuantity());
+                        $sourceItem->setQuantity($qty + $sourceItem->getQuantity());
                         $sourceItem->save();
                     } else {
                         $sourceItem = $this->_objectManager->create("Magento\Inventory\Model\SourceItem");
@@ -282,10 +330,13 @@ class GenerateBarcodeManagement implements \Lof\BarcodeInventory\Api\GenerateBar
                 } elseif ($multiQtyBarcode->getWarehouseCode()) {
                     $objDate = $this->_objectManager->create('Magento\Framework\Stdlib\DateTime\DateTime');
                     $date = $objDate->gmtDate();
-                    $stock = $this->_objectManager->create("Lof\Inventory\Model\ResourceModel\Stock\Collection")->addFieldToFilter("warehouse_code", $multiQtyBarcode->getWarehouseCode())
-                    ->addFieldToFilter("product_sku", $product->getSku())->getFirstItem();
+                    $stock = $this->_objectManager->create("Lof\Inventory\Model\ResourceModel\Stock\Collection")->addFieldToFilter(
+                        "warehouse_code",
+                        $multiQtyBarcode->getWarehouseCode()
+                    )
+                        ->addFieldToFilter("product_sku", $product->getSku())->getFirstItem();
                     if ($stock->getData()) {
-                        $stock->setTotalQty($stock->getTotalQty()+$qty)->setUpdatedAt($date);
+                        $stock->setTotalQty($stock->getTotalQty() + $qty)->setUpdatedAt($date);
                         $stock->save();
                     } else {
                         $stock = $this->_objectManager->create("Lof\Inventory\Model\Stock");
@@ -293,9 +344,9 @@ class GenerateBarcodeManagement implements \Lof\BarcodeInventory\Api\GenerateBar
                             ->setTotalQty($qty)->setCreatedAt($date)->setUpdatedAt($date);
                     }
                 } else {
-                    $sku =$product->getSku();
+                    $sku = $product->getSku();
                     $stockItem = $this->stockRegistry->getStockItemBySku($sku);
-                    $stockItem->setQty($stockItem->getQty()+$multiQtyBarcode->getQty());
+                    $stockItem->setQty($stockItem->getQty() + $multiQtyBarcode->getQty());
                     $stockItem->setIsInStock((bool)1);
                     $this->stockRegistry->updateStockItemBySku($sku, $stockItem);
                 }

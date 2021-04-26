@@ -1,4 +1,24 @@
 <?php
+/**
+ * Landofcoder
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Landofcoder.com license that is
+ * available through the world-wide-web at this URL:
+ * https://landofcoder.com/terms
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category   Landofcoder
+ * @package    Lof_BarcodeInventory
+ * @copyright  Copyright (c) 2021 Landofcoder (https://www.landofcoder.com/)
+ * @license    https://landofcoder.com/terms
+ */
+
 namespace Lof\BarcodeInventory\Ui\Component\Listing\Columns;
 
 use Lof\BarcodeInventory\Helper\Data;
@@ -9,25 +29,23 @@ use Magento\Framework\View\Element\UiComponent\ContextInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Ui\Component\Listing\Columns\Column;
 
-/**
- * Class Barcode
- * @package Lof\BarcodeInventory\Ui\Component\Listing\Columns
- */
 class Barcode extends Column
 {
-
     /**
      * @var StoreManagerInterface
      */
     protected $storeManager;
+
     /**
      * @var Image
      */
     private $imageHelper;
+
     /**
      * @var UrlInterface
      */
     private $urlBuilder;
+
     /**
      * @var Data
      */

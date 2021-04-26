@@ -1,59 +1,76 @@
 <?php
+/**
+ * Landofcoder
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Landofcoder.com license that is
+ * available through the world-wide-web at this URL:
+ * https://landofcoder.com/terms
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category   Landofcoder
+ * @package    Lof_BarcodeInventory
+ * @copyright  Copyright (c) 2021 Landofcoder (https://www.landofcoder.com/)
+ * @license    https://landofcoder.com/terms
+ */
+
 namespace Lof\BarcodeInventory\Ui\Component\MassAction\Barcode;
 
 use Magento\Framework\UrlInterface;
 use Zend\Stdlib\JsonSerializable;
 
-/**
-* Class Options
-*/
 class Options implements JsonSerializable
 {
     /**
-    * @var array
-    */
+     * @var array
+     */
     protected $options;
 
     /**
-    * Additional options params
-    *
-    * @var array
-    */
+     * Additional options params
+     *
+     * @var array
+     */
     protected $data;
 
     /**
-    * @var UrlInterface
-    */
+     * @var UrlInterface
+     */
     protected $urlBuilder;
 
     /**
-    * Base URL for subactions
-    *
-    * @var string
-    */
+     * Base URL for subactions
+     *
+     * @var string
+     */
     protected $urlPath;
 
     /**
-    * Param name for subactions
-    *
-    * @var string
-    */
+     * Param name for subactions
+     *
+     * @var string
+     */
     protected $paramName;
 
     /**
-    * Additional params for subactions
-    *
-    * @var array
-    */
+     * Additional params for subactions
+     *
+     * @var array
+     */
     protected $additionalData = [];
 
     /**
-    * Constructor
-    *
-    * @param CollectionFactory $collectionFactory
-    * @param UrlInterface $urlBuilder
-    * @param array $data
-    */
+     * Constructor
+     *
+     * @param CollectionFactory $collectionFactory
+     * @param UrlInterface $urlBuilder
+     * @param array $data
+     */
     public function __construct(
         UrlInterface $urlBuilder,
         array $data = []
@@ -63,28 +80,29 @@ class Options implements JsonSerializable
     }
 
     /**
-    * Get action options
-    *
-    * @return array
-    */
+     * Get action options
+     *
+     * @return array
+     */
     public function jsonSerialize()
     {
         if ($this->options === null) {
-            $options = array(
-            array(
-            "value" => "1",
-            "label" => ('Active'),
-            ),
-            array(
-            "value" => "2",
-            "label" => ('Inactive'),
-            )
-            );
+            $options = [
+                [
+                    "value" => "1",
+                    "label" => ('Active'),
+                ],
+                [
+                    "value" => "2",
+                    "label" => ('Inactive'),
+                ]
+            ];
+
             $this->prepareData();
             foreach ($options as $optionCode) {
                 $this->options[$optionCode['value']] = [
-                'type' => 'status_' . $optionCode['value'],
-                'label' => $optionCode['label'],
+                    'type' => 'status_' . $optionCode['value'],
+                    'label' => $optionCode['label'],
                 ];
 
                 if ($this->urlPath && $this->paramName) {
@@ -105,10 +123,10 @@ class Options implements JsonSerializable
     }
 
     /**
-    * Prepare addition data for subactions
-    *
-    * @return void
-    */
+     * Prepare addition data for subactions
+     *
+     * @return void
+     */
     protected function prepareData()
     {
         foreach ($this->data as $key => $value) {

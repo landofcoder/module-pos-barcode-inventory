@@ -1,4 +1,24 @@
 <?php
+/**
+ * Landofcoder
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Landofcoder.com license that is
+ * available through the world-wide-web at this URL:
+ * https://landofcoder.com/terms
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category   Landofcoder
+ * @package    Lof_BarcodeInventory
+ * @copyright  Copyright (c) 2021 Landofcoder (https://www.landofcoder.com/)
+ * @license    https://landofcoder.com/terms
+ */
+
 namespace Lof\BarcodeInventory\Controller\PrintBarcode;
 
 use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
@@ -13,16 +33,46 @@ use Lof\BarcodeInventory\Helper\Data;
 
 class PrintFile extends Action
 {
+    /**
+     * @var
+     */
     public $imageUploader;
+
+    /**
+     * @var Csv
+     */
     protected $csvProcessor;
+
+    /**
+     * @var CollectionFactory
+     */
     protected $productCollectionFactory;
+
+    /**
+     * @var Data
+     */
     protected $_helper;
+
+    /**
+     * @var Filesystem\Directory\WriteInterface
+     */
     private $mediaDirectory;
+
     /**
      * @var PageFactory
      */
     private $pageFactory;
 
+    /**
+     * PrintFile constructor.
+     * @param Context $context
+     * @param Data $data
+     * @param Csv $csvProcessor
+     * @param CollectionFactory $productCollectionFactory
+     * @param Filesystem $filesystem
+     * @param PageFactory $pageFactory
+     * @throws \Magento\Framework\Exception\FileSystemException
+     */
     public function __construct(
         Context $context,
         Data $data,
@@ -39,6 +89,10 @@ class PrintFile extends Action
         $this->pageFactory = $pageFactory;
     }
 
+    /**
+     * @return \Magento\Framework\App\ResponseInterface|Raw|\Magento\Framework\Controller\ResultInterface
+     * @throws \Exception
+     */
     public function execute()
     {
         /** @var Raw $response */

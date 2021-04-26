@@ -6,7 +6,7 @@
  *
  * This source file is subject to the Landofcoder.com license that is
  * available through the world-wide-web at this URL:
- * http://www.landofcoder.com/license-agreement.html
+ * https://landofcoder.com/terms
  *
  * DISCLAIMER
  *
@@ -15,8 +15,8 @@
  *
  * @category   Landofcoder
  * @package    Lof_BarcodeInventory
- * @copyright  Copyright (c) 2020 Landofcoder (http://www.landofcoder.com/)
- * @license    http://www.landofcoder.com/LICENSE-1.0.html
+ * @copyright  Copyright (c) 2021 Landofcoder (https://www.landofcoder.com/)
+ * @license    https://landofcoder.com/terms
  */
 
 namespace Lof\BarcodeInventory\Observer;
@@ -26,9 +26,6 @@ use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\UrlInterface;
 
-/**
- * Lof BarcodeInventory ProductSaveBefore Observer.
- */
 class ProductSaveBefore implements ObserverInterface
 {
     /**
@@ -41,6 +38,9 @@ class ProductSaveBefore implements ObserverInterface
      */
     protected $product;
 
+    /**
+     * @var UrlInterface
+     */
     protected $url;
 
     /**

@@ -1,4 +1,23 @@
 <?php
+/**
+ * Landofcoder
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Landofcoder.com license that is
+ * available through the world-wide-web at this URL:
+ * https://landofcoder.com/terms
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category   Landofcoder
+ * @package    Lof_BarcodeInventory
+ * @copyright  Copyright (c) 2021 Landofcoder (https://www.landofcoder.com/)
+ * @license    https://landofcoder.com/terms
+ */
 
 namespace Lof\BarcodeInventory\Controller\Adminhtml\Barcode;
 
@@ -15,9 +34,6 @@ use Magento\Framework\View\Result\Page;
 use Magento\Framework\View\Result\PageFactory;
 use Magento\Ui\Component\MassAction\Filter;
 
-/**
- * Class MassDelete
- */
 class MassPrint extends \Magento\Backend\App\Action implements HttpPostActionInterface
 {
 
@@ -30,27 +46,31 @@ class MassPrint extends \Magento\Backend\App\Action implements HttpPostActionInt
      * @var
      */
     protected $_helper;
+
     /**
      * @var CollectionFactory
      */
     protected $collectionFactory;
+
     /**
      * @var Registry
      */
     protected $_coreRegistry;
+
     /**
      * @var PageFactory
      */
     protected $_pageFactory;
+
     /**
      * @var ResponseFactory
      */
     protected $_responseFactory;
+
     /**
      * @var Data
      */
     private $helper;
-
 
     /**
      * MassPrint constructor.

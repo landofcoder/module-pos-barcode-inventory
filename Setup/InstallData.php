@@ -6,7 +6,7 @@
  *
  * This source file is subject to the Landofcoder.com license that is
  * available through the world-wide-web at this URL:
- * http://www.landofcoder.com/license-agreement.html
+ * https://landofcoder.com/terms
  *
  * DISCLAIMER
  *
@@ -14,10 +14,11 @@
  * version in the future.
  *
  * @category   Landofcoder
- * @package    Lof_Supplier
- * @copyright  Copyright (c) 2020 Landofcoder (http://www.landofcoder.com/)
- * @license    http://www.landofcoder.com/LICENSE-1.0.html
+ * @package    Lof_BarcodeInventory
+ * @copyright  Copyright (c) 2021 Landofcoder (https://www.landofcoder.com/)
+ * @license    https://landofcoder.com/terms
  */
+
 namespace Lof\BarcodeInventory\Setup;
 
 use Magento\Eav\Setup\EavSetup;
@@ -28,17 +29,28 @@ use Magento\Framework\Setup\ModuleDataSetupInterface;
 
 class InstallData implements InstallDataInterface
 {
+    /**
+     * @var EavSetupFactory
+     */
     private $eavSetupFactory;
 
+    /**
+     * InstallData constructor.
+     * @param EavSetupFactory $eavSetupFactory
+     */
     public function __construct(EavSetupFactory $eavSetupFactory)
     {
         $this->eavSetupFactory = $eavSetupFactory;
     }
 
+    /**
+     * @param ModuleDataSetupInterface $setup
+     * @param ModuleContextInterface $context
+     */
     public function install(ModuleDataSetupInterface $setup, ModuleContextInterface $context)
     {
         $eavSetup = $this->eavSetupFactory->create(['setup' => $setup]);
-        $data = array(
+        $data = [
             'group' => 'General',
             'type' => 'varchar',
             'input' => 'text',
@@ -66,7 +78,8 @@ class InstallData implements InstallDataInterface
             'is_visible_on_front' => 1,
             'used_in_product_listing' => 1,
             'used_for_sort_by' => 0,
-        );
+        ];
+
         $eavSetup->addAttribute(
             \Magento\Catalog\Model\Product::ENTITY,
             'barcode',
