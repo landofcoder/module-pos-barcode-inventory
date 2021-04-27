@@ -62,14 +62,6 @@ class UploadCsv extends \Magento\Backend\App\Action
     }
 
     /**
-     * @return bool
-     */
-    public function _isAllowed()
-    {
-        return $this->_authorization->isAllowed('Lof_BarcodeInventory::upload_csv');
-    }
-
-    /**
      * @return \Magento\Framework\App\ResponseInterface|\Magento\Framework\Controller\ResultInterface
      */
     public function execute()
@@ -84,5 +76,13 @@ class UploadCsv extends \Magento\Backend\App\Action
             $result = ['error' => $e->getMessage(), 'errorcode' => $e->getCode()];
         }
         return $this->resultFactory->create(ResultFactory::TYPE_JSON)->setData($result);
+    }
+
+    /**
+     * @return bool
+     */
+    public function _isAllowed()
+    {
+        return $this->_authorization->isAllowed('Lof_BarcodeInventory::upload_csv');
     }
 }

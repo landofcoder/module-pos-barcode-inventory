@@ -25,6 +25,7 @@
             <resource id="Magento_Backend::admin">
                 <resource id="Lof_BarcodeInventory::barcode" sortOrder="10" title="Barcode Inventory">
                     <resource id="Lof_BarcodeInventory::upload_csv" sortOrder="10" title="Upload CSV"/>
+                    <resource id="Lof_BarcodeInventory::download" sortOrder="10" title="Download"/>
                     <resource id="Lof_BarcodeInventory::print_barcode" sortOrder="20" title="Print Barcode"/>
                     <resource id="Lof_BarcodeInventory::mass_print" sortOrder="20" title="Mass Print Barcode"/>
                     <resource id="Lof_BarcodeInventory::barcode_generate" sortOrder="20" title="Barcode Generate"/>

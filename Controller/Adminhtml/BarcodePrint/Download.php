@@ -21,7 +21,7 @@
 
 namespace Lof\BarcodeInventory\Controller\Adminhtml\BarcodePrint;
 
-class Download extends \Magento\Framework\App\Action\Action
+class Download extends \Magento\Backend\App\Action
 {
     /**
      * @var \Magento\Framework\App\Response\Http\FileFactory
@@ -108,8 +108,12 @@ class Download extends \Magento\Framework\App\Action\Action
         $content['rm'] = '1';
         return $this->fileFactory->create($fileName, $content, \Magento\Framework\App\Filesystem\DirectoryList::VAR_DIR);
     }
-//    protected function _isAllowed()
-//    {
-//        return $this->_authorization->isAllowed('Lof_BarcodeInventory::Download');
-//    }
+
+    /**
+     * @return mixed
+     */
+    protected function _isAllowed()
+    {
+        return $this->_authorization->isAllowed('Lof_BarcodeInventory::download');
+    }
 }
