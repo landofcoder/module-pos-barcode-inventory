@@ -50,7 +50,7 @@ class Download extends \Magento\Backend\App\Action
 
     /**
      * Download constructor.
-     * @param \Magento\Framework\App\Action\Context $context
+     * @param \Magento\Backend\App\Action\Context $context
      * @param \Magento\Framework\App\Response\Http\FileFactory $fileFactory
      * @param \Magento\Framework\File\Csv $csvProcessor
      * @param \Magento\Framework\Filesystem $filesystem
@@ -60,7 +60,7 @@ class Download extends \Magento\Backend\App\Action
      * @throws \Magento\Framework\Exception\FileSystemException
      */
     public function __construct(
-        \Magento\Framework\App\Action\Context $context,
+        \Magento\Backend\App\Action\Context $context,
         \Magento\Framework\App\Response\Http\FileFactory $fileFactory,
         \Magento\Framework\File\Csv $csvProcessor,
         \Magento\Framework\Filesystem $filesystem,

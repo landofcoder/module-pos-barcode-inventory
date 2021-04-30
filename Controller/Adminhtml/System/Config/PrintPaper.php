@@ -21,7 +21,7 @@
 
 namespace Lof\BarcodeInventory\Controller\Adminhtml\System\Config;
 
-use Magento\Framework\App\Action\Context;
+use Magento\Backend\App\Action\Context;
 use Magento\Framework\View\Result\PageFactory;
 
 class PrintPaper extends \Magento\Backend\App\Action
