@@ -20,6 +20,7 @@
  */
 
 namespace Lof\BarcodeInventory\Api;
+use Magento\Store\Model\Store;
 
 interface GenerateBarcodeManagementInterface
 {
@@ -33,9 +34,10 @@ interface GenerateBarcodeManagementInterface
     /**
      * GET product info by barcode
      * @param string $barcode
+     * @param null|string|bool|int|Store $store_id
      * @return mixed
      */
-    public function getProductInfo($barcode);
+    public function getProductInfo($barcode, $store_id = null);
 
     /**
      * GET all barcode with product_id, qty
@@ -49,9 +51,10 @@ interface GenerateBarcodeManagementInterface
      * GET all barcode with product_id, qty
      * @param string $barcode
      * @param string $cartId
+     * @param null|string|bool|int|Store $store_id
      * @return mixed
      */
-    public function addProductToCartByBarcode($barcode, $cartId);
+    public function addProductToCartByBarcode($barcode, $cartId, $store_id = null);
 
     /**
      * GET all barcode with product_id, qty

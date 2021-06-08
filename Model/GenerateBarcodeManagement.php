@@ -36,6 +36,7 @@ use Magento\Quote\Model\QuoteFactory;
 use Picqer\Barcode\BarcodeGeneratorPNG;
 use Psr\Log\LoggerInterface;
 
+
 class GenerateBarcodeManagement implements \Lof\BarcodeInventory\Api\GenerateBarcodeManagementInterface
 {
     /**
@@ -152,14 +153,19 @@ class GenerateBarcodeManagement implements \Lof\BarcodeInventory\Api\GenerateBar
     }
 
     /**
-     * @param string $barcode
-     * @return array|mixed|null
-     * @throws NoSuchEntityException
+     * {@inheritdoc}
      */
-    public function getProductInfo($barcode)
+    public function getProductInfo($barcode, $store_id = null)
     {
-        $productSku = $this->productCollectionFactory->create()->addFieldToFilter('sku', $barcode)->getFirstItem();
-        $productByBarcode = $this->product->create()->loadByAttribute('barcode', $barcode);
+        $productSku = $this->productCollectionFactory->create()->addFieldToFilter('sku', $barcode)
+                        ->addStoreFilter($store_id)
+                        ->getFirstItem();
+
+        $productByBarcode = $this->product->create();
+        if($store_id && is_numeric($store_id)){
+            $productByBarcode->setStoreId($store_id);
+        }
+        $productByBarcode = $productByBarcode->loadByAttribute('barcode', $barcode);
         $productData = [];
         if ($productSku->getId()) {
             $productBySku = $this->productRepository->get($barcode);
@@ -173,12 +179,17 @@ class GenerateBarcodeManagement implements \Lof\BarcodeInventory\Api\GenerateBar
         } elseif ($this->_moduleManager->isEnabled('Lof_MultiBarcode')) {
             $multiQtyBarcode = $this->_objectManager->create("Lof\MultiBarcode\Model\ResourceModel\Barcode\Collection")
                 ->addFieldToFilter('barcode', $barcode)->getFirstItem();
+
             if ($multiQtyBarcode->getData()) {
                 $productId = $multiQtyBarcode->getData('product_id');
-                $product = $this->product->create()->load($productId);
+                $product = $this->product->create();
+                if($store_id && is_numeric($store_id)){
+                    $product->setStoreId($store_id);
+                }
+                $product = $product->load($productId);
                 $productData = $product->getData();
                 $productData['qty'] = $multiQtyBarcode->getQty();
-                $productData['model'] = $productData;
+                $productData['model'] = $product;
 
             }
         }
@@ -186,9 +197,7 @@ class GenerateBarcodeManagement implements \Lof\BarcodeInventory\Api\GenerateBar
     }
 
     /**
-     * @param int $pageSize
-     * @param int $pageNumber
-     * @return array[]|mixed
+     * {@inheritdoc}
      */
     public function getAllBarcode($pageSize, $pageNumber)
     {
@@ -245,13 +254,11 @@ class GenerateBarcodeManagement implements \Lof\BarcodeInventory\Api\GenerateBar
     }
 
     /**
-     * @param string $barcode
-     * @param string $cartId
-     * @return mixed|string
+     * {@inheritdoc}
      */
-    public function addProductToCartByBarcode($barcode, $cartId)
+    public function addProductToCartByBarcode($barcode, $cartId, $store_id = null)
     {
-        $product = $this->getProductInfo($barcode);
+        $product = $this->getProductInfo($barcode, $store_id);
 
         if (isset($product) && $product) {
             $params = [
@@ -263,7 +270,7 @@ class GenerateBarcodeManagement implements \Lof\BarcodeInventory\Api\GenerateBar
                 if ($cartId) {
                     $cart->getQuote()->load($cartId);
                 }
-                $cart->addProduct($product['model'], $params);
+                $cart->addProduct($product['model'], (int)$product['qty']);
                 $cart->save();
             } catch (LocalizedException $e) {
                 $this->logger->critical($e->getMessage());
