@@ -18,3 +18,59 @@
  - Apply database updates by running `php bin/magento setup:upgrade`\*
  - Flush the cache by running `php bin/magento cache:flush`
 
+
+## Example Graphql
+
+1. Add Product To Cart by Barcode:
+
+```
+mutation{
+  frontAddProductToCartByBarcode(
+    cart_id: 22,
+    barcode: "123456789"
+  ){
+    code
+    message
+  }
+}
+```
+
+2. Get Product info by Barcode:
+
+```
+
+query{
+  frontProductByBarcode(barcode: "123456789"){
+    id
+    name
+    sku
+		thumbnail{
+      url
+      label
+      position
+    }
+    price_range{
+      minimum_price{
+        regular_price{
+          value
+          currency
+        }
+        final_price{
+          value
+          currency
+        }
+      }
+      maximum_price{
+        regular_price{
+          value
+          currency
+        }
+        final_price{
+          value
+          currency
+        }
+      }
+    }
+  }
+}
+```
