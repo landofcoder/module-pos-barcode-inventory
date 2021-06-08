@@ -179,12 +179,17 @@ class GenerateBarcodeManagement implements \Lof\BarcodeInventory\Api\GenerateBar
         } elseif ($this->_moduleManager->isEnabled('Lof_MultiBarcode')) {
             $multiQtyBarcode = $this->_objectManager->create("Lof\MultiBarcode\Model\ResourceModel\Barcode\Collection")
                 ->addFieldToFilter('barcode', $barcode)->getFirstItem();
+
             if ($multiQtyBarcode->getData()) {
                 $productId = $multiQtyBarcode->getData('product_id');
-                $product = $this->product->create()->load($productId);
+                $product = $this->product->create();
+                if($store_id && is_numeric($store_id)){
+                    $product->setStoreId($store_id);
+                }
+                $product = $product->load($productId);
                 $productData = $product->getData();
                 $productData['qty'] = $multiQtyBarcode->getQty();
-                $productData['model'] = $productData;
+                $productData['model'] = $product;
 
             }
         }
@@ -265,7 +270,7 @@ class GenerateBarcodeManagement implements \Lof\BarcodeInventory\Api\GenerateBar
                 if ($cartId) {
                     $cart->getQuote()->load($cartId);
                 }
-                $cart->addProduct($product['model'], $params);
+                $cart->addProduct($product['model'], (int)$product['qty']);
                 $cart->save();
             } catch (LocalizedException $e) {
                 $this->logger->critical($e->getMessage());
