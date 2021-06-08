@@ -36,6 +36,7 @@ use Magento\Quote\Model\QuoteFactory;
 use Picqer\Barcode\BarcodeGeneratorPNG;
 use Psr\Log\LoggerInterface;
 
+
 class GenerateBarcodeManagement implements \Lof\BarcodeInventory\Api\GenerateBarcodeManagementInterface
 {
     /**
@@ -152,14 +153,19 @@ class GenerateBarcodeManagement implements \Lof\BarcodeInventory\Api\GenerateBar
     }
 
     /**
-     * @param string $barcode
-     * @return array|mixed|null
-     * @throws NoSuchEntityException
+     * {@inheritdoc}
      */
-    public function getProductInfo($barcode)
+    public function getProductInfo($barcode, $store_id = null)
     {
-        $productSku = $this->productCollectionFactory->create()->addFieldToFilter('sku', $barcode)->getFirstItem();
-        $productByBarcode = $this->product->create()->loadByAttribute('barcode', $barcode);
+        $productSku = $this->productCollectionFactory->create()->addFieldToFilter('sku', $barcode)
+                        ->addStoreFilter($store_id)
+                        ->getFirstItem();
+
+        $productByBarcode = $this->product->create();
+        if($store_id && is_numeric($store_id)){
+            $productByBarcode->setStoreId($store_id);
+        }
+        $productByBarcode = $productByBarcode->loadByAttribute('barcode', $barcode);
         $productData = [];
         if ($productSku->getId()) {
             $productBySku = $this->productRepository->get($barcode);
@@ -186,9 +192,7 @@ class GenerateBarcodeManagement implements \Lof\BarcodeInventory\Api\GenerateBar
     }
 
     /**
-     * @param int $pageSize
-     * @param int $pageNumber
-     * @return array[]|mixed
+     * {@inheritdoc}
      */
     public function getAllBarcode($pageSize, $pageNumber)
     {
@@ -245,13 +249,11 @@ class GenerateBarcodeManagement implements \Lof\BarcodeInventory\Api\GenerateBar
     }
 
     /**
-     * @param string $barcode
-     * @param string $cartId
-     * @return mixed|string
+     * {@inheritdoc}
      */
-    public function addProductToCartByBarcode($barcode, $cartId)
+    public function addProductToCartByBarcode($barcode, $cartId, $store_id = null)
     {
-        $product = $this->getProductInfo($barcode);
+        $product = $this->getProductInfo($barcode, $store_id);
 
         if (isset($product) && $product) {
             $params = [

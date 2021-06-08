@@ -26,6 +26,9 @@ type Query {
         currentPage: Int = 1 @doc(description: "Specifies which page of results to return. The default value is 1."),
     ) : Barcodes @resolver(class: "\\Lof\\BarcodeInventory\\Model\\Resolver\\Barcodes")
 
+    frontProductByBarcode (
+        barcode: String!
+    ) : ProductInterface @resolver( class: "Lof\\BarcodeInventory\\Model\\Resolver\\FrontProductByBarcode")
 }
 
 type Mutation {
@@ -34,6 +37,11 @@ type Mutation {
         barcode: String!,
         cartId: Int = 0,
     ): Res @resolver(class: "\\Lof\\BarcodeInventory\\Model\\Resolver\\AddToCart")
+
+    frontAddProductToCartByBarcode(
+        cart_id: String! @doc(description: "Masked Cart id")
+        barcode: String! @doc(description: "Barcode")
+    ): Res @resolver(class: "\\Lof\\BarcodeInventory\\Model\\Resolver\\FrontAddToCart")
 
     LofUpdateProductInCartByBarcode(barcode: String!): Res @resolver(class: "\\Lof\\BarcodeInventory\\Model\\Resolver\\UpdateQty")
 
