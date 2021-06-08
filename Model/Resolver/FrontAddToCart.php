@@ -90,10 +90,10 @@ class FrontAddToCart implements ResolverInterface
             throw new GraphQlInputException(__('Required parameter "barcode" is missing'));
         }
         $storeId = (int)$context->getExtensionAttributes()->getStore()->getId();
-        $quote = $this->quoteRepository->getActive($args['cart_id'], [(int)$storeId]);
+        $quote = $this->quoteRepository->getActive((int)$args['cart_id'], [(int)$storeId]);
         if(!$quote || !$quote->getId()){
             throw new GraphQlInputException(__('The cart is empty.'));
         }
-        return $this->barcodeManagement->addProductToCartByBarcode($args['barcode'], $quote->getId(), $storeId);
+        return $this->barcodeManagement->addProductToCartByBarcode($args['barcode'], $args['cart_id'], $storeId);
     }
 }

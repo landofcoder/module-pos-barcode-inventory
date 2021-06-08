@@ -39,7 +39,7 @@ type Mutation {
     ): Res @resolver(class: "\\Lof\\BarcodeInventory\\Model\\Resolver\\AddToCart")
 
     frontAddProductToCartByBarcode(
-        cart_id: String! @doc(description: "Masked Cart id")
+        cart_id: Int! @doc(description: "Masked Cart id")
         barcode: String! @doc(description: "Barcode")
     ): Res @resolver(class: "\\Lof\\BarcodeInventory\\Model\\Resolver\\FrontAddToCart")
 
