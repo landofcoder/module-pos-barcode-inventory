@@ -34,7 +34,7 @@ interface GenerateBarcodeManagementInterface
     /**
      * GET product info by barcode
      * @param string $barcode
-     * @param null|string|bool|int|Store $store_id
+     * @param string|bool|int|Store|null $store_id
      * @return mixed
      */
     public function getProductInfo($barcode, $store_id = null);
@@ -51,7 +51,7 @@ interface GenerateBarcodeManagementInterface
      * GET all barcode with product_id, qty
      * @param string $barcode
      * @param string $cartId
-     * @param null|string|bool|int|Store $store_id
+     * @param string|bool|int|Store|null $store_id
      * @return mixed
      */
     public function addProductToCartByBarcode($barcode, $cartId, $store_id = null);
