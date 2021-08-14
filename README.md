@@ -5,8 +5,12 @@
  - [Main Functionalities](#markdown-header-main-functionalities)
  - [Installation](#markdown-header-installation)
 
-## Main Functionalities
+Compatible with magento 2.3.6, 2.4.0, 2.4.1, 2.4.2, 2.4.2-p1, 2.4.3
 
+## Main Functionalities
+- Generate barcode by inventory, mutil source stock
+- Add product to cart with barcode (GraphQl, REST API)
+- query find products by barcode (GraphQl, REST API)
 
 ## Installation
 \* = in production please use the `--keep-generated` option
