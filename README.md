@@ -1,4 +1,4 @@
-# Mage2 Module Lof BarcodeInventory
+# Magento 2 Module Lof BarcodeInventory
 
     ``landofcoder/module-pos-barcode-inventory``
 
