@@ -16,9 +16,10 @@
     ],
     "authors": [
         {
-            "email": "landofcoder@gmail.com",
             "name": "Landofcoder",
-            "homepage": "https://landofcoder.com"
+            "email": "info@landofcoder.com",
+            "homepage": "https://landofcoder.com",
+            "role": "Magento 2 Solution and Extensions Provider"
         }
     ],
     "minimum-stability": "dev",
