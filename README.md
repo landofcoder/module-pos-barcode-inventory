@@ -1,6 +1,6 @@
 # Magento 2 Module Lof BarcodeInventory
 
-    ``landofcoder/module-pos-barcode-inventory``
+    ``landofcoder/module-barcodeinventory``
 
  - [Main Functionalities](#markdown-header-main-functionalities)
  - [Installation](#markdown-header-installation)
@@ -15,9 +15,18 @@ Compatible with magento 2.3.6, 2.4.0, 2.4.1, 2.4.2, 2.4.2-p1, 2.4.3
 ## Installation
 \* = in production please use the `--keep-generated` option
 
+### Option 1 setup via composer (Recommended):
+
+```
+composer require landofcoder/module-barcodeinventory
+```
+
+### Option 2 setup via upload FTP:
+ - Unzip the zip file in `app/code/Lof`
  - Install picqer library: `composer require picqer/php-barcode-generator`
  - Install  mpdf library: `composer require mpdf/mpdf`
- - Unzip the zip file in `app/code/Lof`
+
+### Final step:
  - Enable the module by running `php bin/magento module:enable Lof_BarcodeInventory`
  - Apply database updates by running `php bin/magento setup:upgrade`\*
  - Flush the cache by running `php bin/magento cache:flush`
