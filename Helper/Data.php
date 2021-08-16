@@ -342,8 +342,10 @@ class Data extends AbstractHelper
                     if (!$att) {
                         continue;
                     }
-                    $label = $product->getResource()->getAttribute($item)->getFrontendLabel();
-                    $str .= "<div class = 'row'><b>$label: $att</b></div>";
+                    if($product->getResource()->getAttribute($item)){
+                        $label = $product->getResource()->getAttribute($item)->getFrontendLabel();
+                        $str .= "<div class = 'row'><b>$label: $att</b></div>";
+                    }
                 }
                 $str = "<div class='barcode_paper'>$str</div>";
             }
